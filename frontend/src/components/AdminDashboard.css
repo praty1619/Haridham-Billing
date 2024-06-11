@@ -1,0 +1,65 @@
+.banner {
+  background-color: rgba(85, 93, 80, 0.8); /* Ebony color with 80% opacity */
+  color: #ffffff;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.banner h1 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.banner p {
+  margin: 10px 0 0;
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.subheading {
+  margin-top: 10px;
+}
+
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.navigation-panel {
+  width: 20%;
+  background: #f4f4f4;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.navigation-panel h2 {
+  margin-bottom: 20px;
+  color: #333; /* Dark text color */
+}
+
+.navigation-panel ul {
+  list-style: none;
+  padding: 0;
+}
+
+.navigation-panel li {
+  cursor: pointer;
+  padding: 10px 0;
+  color: #666; /* Medium-dark text color */
+}
+
+.main-content {
+  width: 80%;
+  padding: 20px;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+/* Remove hover effect */
+.navigation-panel li:hover {
+  background: none;
+}
