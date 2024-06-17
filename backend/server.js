@@ -241,6 +241,43 @@ app.get('/api/expense/filter', (req, res) => {
   });
 });
 
+app.get('/api/expense/totalAmount', async (req, res) => {
+  const { category, date, month, year } = req.query;
+
+  let query = 'SELECT SUM(amountNumeric) as totalAmount FROM expense_forms WHERE 1=1'; // replace `your_table_name` with your actual table name
+  let queryParams = [];
+
+  if (category) {
+    queryParams.push(category);
+    query += ` AND category = $${queryParams.length}`;
+  }
+
+  if (date) {
+    queryParams.push(date);
+    query += ` AND DATE(date) = $${queryParams.length}`;
+  }
+
+  if (month) {
+    queryParams.push(month);
+    query += ` AND EXTRACT(MONTH FROM date) = $${queryParams.length}`;
+  }
+
+  if (year) {
+    queryParams.push(year);
+    query += ` AND EXTRACT(YEAR FROM date) = $${queryParams.length}`;
+  }
+
+  try {
+    const { rows } = await pool.query(query, queryParams);
+    const totalAmount = rows[0].totalamount || 0;
+    res.json({ totalAmount });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 app.post('/submit-form', (req, res) => {
   const { name, address, category, amountNumeric, amountWords, date } = req.body;
   const sql = 'INSERT INTO forms (name, address, category, amountNumeric, amountWords, date) VALUES ($1, $2, $3, $4, $5, $6)';
@@ -296,6 +333,42 @@ app.get('/api/forms/filter', (req, res) => {
     }
     res.send(results.rows);
   });
+});
+
+app.get('/api/forms/totalAmount', async (req, res) => {
+  const { category, date, month, year } = req.query;
+
+  let query = 'SELECT SUM(amountNumeric) as totalAmount FROM forms WHERE 1=1'; // replace `your_table_name` with your actual table name
+  let queryParams = [];
+
+  if (category) {
+    queryParams.push(category);
+    query += ` AND category = $${queryParams.length}`;
+  }
+
+  if (date) {
+    queryParams.push(date);
+    query += ` AND DATE(date) = $${queryParams.length}`;
+  }
+
+  if (month) {
+    queryParams.push(month);
+    query += ` AND EXTRACT(MONTH FROM date) = $${queryParams.length}`;
+  }
+
+  if (year) {
+    queryParams.push(year);
+    query += ` AND EXTRACT(YEAR FROM date) = $${queryParams.length}`;
+  }
+
+  try {
+    const { rows } = await pool.query(query, queryParams);
+    const totalAmount = rows[0].totalamount || 0;
+    res.json({ totalAmount });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 // Endpoint to handle form submission for AmarNidhi

@@ -7,6 +7,7 @@ import {
 
 const FormRecords = () => {
   const [records, setRecords] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [displayedRecords, setDisplayedRecords] = useState([]);
@@ -22,11 +23,36 @@ const FormRecords = () => {
 
   useEffect(() => {
     fetchRecords();
+    fetchTotalAmount();
   }, []);
 
   useEffect(() => {
     setDisplayedRecords(records.slice(0, 50));
   }, [records]);
+
+  const fetchTotalAmount = async (filters = {}) => {
+    setLoading(true);
+    setError('');
+    
+    let query = '';
+    if (filters.category) query += `&category=${filters.category}`;
+    if (filters.date) query += `&date=${filters.date}`;
+    if (filters.month) query += `&month=${filters.month}`;
+    if (filters.year) query += `&year=${filters.year}`;
+
+    try {
+      const response = await fetch(`/api/forms/totalAmount?${query}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      setTotalAmount(data.totalAmount);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchRecords = async (filters = {}, append = false) => {
     setLoading(true);
@@ -75,6 +101,7 @@ const FormRecords = () => {
   const handleFilter = () => {
     setOffset(0); // Reset offset when applying filters
     fetchRecords(filters);
+    fetchTotalAmount(filters);
   };
 
   const handleShowMore = () => {
@@ -86,6 +113,9 @@ const FormRecords = () => {
   return (
     <Container maxWidth="md">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
+        <Typography variant="h6" component="h2" gutterBottom>
+          Total Amount: ₹{totalAmount}
+        </Typography>
         <Typography variant="h6" component="h2" gutterBottom>
           Raseed Records
         </Typography>

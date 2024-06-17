@@ -20,7 +20,7 @@ const GaushalaBhusaAurChara = () => {
     setLoading(true);
     setError('');
 
-    let query = 'category=Gaushala%20Bhusa%20Aur%20Chara';
+    let query = 'category=Gaushala%20Bhusa%20aur%20Chara';
     if (filters.date) query += `&date=${filters.date}`;
     if (filters.month) query += `&month=${filters.month}`;
     if (filters.year) query += `&year=${filters.year}`;

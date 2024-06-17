@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
 import { Container, TextField, MenuItem, Button, Typography, Paper, Box } from '@mui/material';
 import './FormComponent.css';
@@ -11,11 +11,22 @@ const ExpenseRaseed = () => {
     amountNumeric: '',
     amountWords: '',
     date: '',
-    notes: '', // Additional field
-    tips: ''   // Additional field
+    notes: '',
+    tips: ''
+  });
+
+  const [counter, setCounter] = useState(() => {
+    // Initialize counter from local storage or start from 1 if not found
+    const savedCounter = localStorage.getItem('expenseCounter');
+    return savedCounter ? parseInt(savedCounter, 10) : 1;
   });
 
   const formRef = useRef();
+
+  useEffect(() => {
+    // Save counter to local storage whenever it changes
+    localStorage.setItem('expenseCounter', counter);
+  }, [counter]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,16 +50,20 @@ const ExpenseRaseed = () => {
       amountNumeric: '',
       amountWords: '',
       date: '',
-      notes: '', // Clear the additional fields
+      notes: '',
       tips: ''
     });
 
     // Clear the form fields visually
     formRef.current.reset();
+
+    // Increment the counter for the next receipt
+    setCounter(prevCounter => prevCounter + 1);
   };
 
   const handleDownload = () => {
     const { name, address, category, amountNumeric, amountWords, date, notes, tips } = formData;
+    const receiptId = `${counter}E`;
     const pdf = new jsPDF();
   
     // Add a border to the page
@@ -58,11 +73,11 @@ const ExpenseRaseed = () => {
     // Add title and heading
     pdf.setFontSize(22);
     pdf.setFont('Times', 'Bold');
-    pdf.text('Shree Haridam Bandh Trust Samiti (Reg.)', pdf.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
+    pdf.text('Shree Haribandh Dham Trust Samiti (Reg.)', pdf.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
   
     pdf.setFontSize(14);
     pdf.setFont('Times', 'Normal');
-    pdf.text('Gram-Maulanpur, Post-Garva, Zila Sambhal (U.P.)', pdf.internal.pageSize.getWidth() / 2, 40, { align: 'center' });
+    pdf.text('Gram-Maulanpur, Post-Ganva, Distt. Sambhal (U.P.)', pdf.internal.pageSize.getWidth() / 2, 40, { align: 'center' });
   
     pdf.setFontSize(12);
     pdf.text(`Date: ${date}`, pdf.internal.pageSize.getWidth() / 2, 60, { align: 'center' });
@@ -83,47 +98,50 @@ const ExpenseRaseed = () => {
     // Draw boxes around fields
     pdf.setLineWidth(0.5);
   
-    pdf.text('Shri/Smt:', fieldX, 100);
-    pdf.rect(fieldX, 102, fieldWidth, fieldHeight);
-    pdf.text(name, fieldX + 2, 110);
+    pdf.text('Receipt ID:', fieldX, 90);
+    pdf.rect(fieldX, 92, fieldWidth, fieldHeight);
+    pdf.text(receiptId, fieldX + 2, 100);
   
-    pdf.text('Niwasi:', fieldX, 120);
-    pdf.rect(fieldX, 122, fieldWidth, fieldHeight);
-    pdf.text(address, fieldX + 2, 130);
+    pdf.text('Shri/Smt:', fieldX, 110);
+    pdf.rect(fieldX, 112, fieldWidth, fieldHeight);
+    pdf.text(name, fieldX + 2, 120);
   
-    pdf.text('MadNaam:', fieldX, 140);
-    pdf.rect(fieldX, 142, fieldWidth, fieldHeight);
-    pdf.text(category, fieldX + 2, 150);
+    pdf.text('Niwasi:', fieldX, 130);
+    pdf.rect(fieldX, 132, fieldWidth, fieldHeight);
+    pdf.text(address, fieldX + 2, 140);
   
-    pdf.text('Rashi (Ankan):', fieldX, 160);
-    pdf.rect(fieldX, 162, fieldWidth, fieldHeight);
-    pdf.text(amountNumeric, fieldX + 2, 170);
+    pdf.text('MadNaam:', fieldX, 150);
+    pdf.rect(fieldX, 152, fieldWidth, fieldHeight);
+    pdf.text(category, fieldX + 2, 160);
   
-    pdf.text('Rashi (Shabdo Me):', fieldX, 180);
-    pdf.rect(fieldX, 182, fieldWidth, fieldHeight);
-    pdf.text(amountWords, fieldX + 2, 190);
+    pdf.text('Rashi (Ankan):', fieldX, 170);
+    pdf.rect(fieldX, 172, fieldWidth, fieldHeight);
+    pdf.text(amountNumeric, fieldX + 2, 180);
+  
+    pdf.text('Rashi (Shabdo Me):', fieldX, 190);
+    pdf.rect(fieldX, 192, fieldWidth, fieldHeight);
+    pdf.text(amountWords, fieldX + 2, 200);
+  
+    pdf.text('Notes:', fieldX, 210);
+    pdf.rect(fieldX, 212, fieldWidth, fieldHeight);
+    pdf.text(notes, fieldX + 2, 220);
+  
+    pdf.text('Tips:', fieldX, 230);
+    pdf.rect(fieldX, 232, fieldWidth, fieldHeight);
+    pdf.text(tips, fieldX + 2, 240);
 
-    pdf.text('Notes:', fieldX, 200); // Add field for notes
-    pdf.rect(fieldX, 202, fieldWidth, fieldHeight);
-    pdf.text(notes, fieldX + 2, 210);
-
-    pdf.text('Tips:', fieldX, 220); // Add field for tips
-    pdf.rect(fieldX, 222, fieldWidth, fieldHeight);
-    pdf.text(tips, fieldX + 2, 230);
-
-       // Add signature field
+    // Add signature field
     pdf.setFontSize(12);
     pdf.setFont('Times', 'Normal');
-    pdf.text('Signature:', 20, 250);
+    pdf.text('Signature:', 20, 260);
   
     // Add footer or any additional information
     pdf.setFontSize(10);
     pdf.setTextColor(100);
-    pdf.text('Thank you for your contribution!', pdf.internal.pageSize.getWidth() / 2, 270, { align: 'center' });
+    pdf.text('Thank you for your contribution!', pdf.internal.pageSize.getWidth() / 2, 280, { align: 'center' });
   
     pdf.save('expense_receipt.pdf');
   };
-
   return (
     <Container maxWidth="sm">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
