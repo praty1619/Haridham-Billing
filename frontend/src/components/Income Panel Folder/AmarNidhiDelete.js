@@ -110,7 +110,7 @@ const AmarNidhiDelete = () => {
     <Container maxWidth="md">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
         <Typography variant="h5" component="h2" gutterBottom>
-          Delete AmarNidhi Records
+          डिलीट अमरनिधि खाता
         </Typography>
 
         <Box mb={4}>
@@ -122,9 +122,9 @@ const AmarNidhiDelete = () => {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  <MenuItem value="date">Date</MenuItem>
-                  <MenuItem value="month">Month</MenuItem>
-                  <MenuItem value="year">Year</MenuItem>
+                  <MenuItem value="date">दिनांक</MenuItem>
+                  <MenuItem value="month">माह</MenuItem>
+                  <MenuItem value="year">वर्ष</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -161,7 +161,7 @@ const AmarNidhiDelete = () => {
                     disabled={loading}
                     fullWidth
                   >
-                    Fetch
+                    फिल्टर लागू करें
                   </Button>
                 </Grid>
               </>
@@ -196,7 +196,7 @@ const AmarNidhiDelete = () => {
                     disabled={loading}
                     fullWidth
                   >
-                    Apply Filter
+                    फिल्टर लागू करें
                   </Button>
                 </Grid>
               </>
@@ -231,7 +231,7 @@ const AmarNidhiDelete = () => {
                     disabled={loading}
                     fullWidth
                   >
-                    Apply Filter
+                    फिल्टर लागू करें
                   </Button>
                 </Grid>
               </>
@@ -243,12 +243,12 @@ const AmarNidhiDelete = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Select</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Address</TableCell>
-                <TableCell>Amount (Numeric)</TableCell>
-                <TableCell>Amount (Words)</TableCell>
-                <TableCell>Date</TableCell>
+                <TableCell>चुने</TableCell>
+                <TableCell>नाम</TableCell>
+                <TableCell>पता</TableCell>
+                <TableCell>राशि (संख्यात्मक)</TableCell>
+                <TableCell>राशि (शब्दों में)</TableCell>
+                <TableCell>दिनांक</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -273,12 +273,12 @@ const AmarNidhiDelete = () => {
 
         <Box display="flex" justifyContent="center" mt={2}>
           <Button variant="contained" color="secondary" onClick={handleDelete} disabled={selectedRecords.length === 0}>
-            Delete Selected
+            चयनित को हटाओ
           </Button>
         </Box>
         <Box display="flex" justifyContent="center" mt={2}>
           <Button variant="contained" color="primary" onClick={handleShowMore} disabled={loading}>
-            Show More
+            और दिखाओ
           </Button>
         </Box>
 

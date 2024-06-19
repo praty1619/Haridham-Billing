@@ -101,7 +101,7 @@ const AmarNidhiReceipt = () => {
     <Container maxWidth="md">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
         <Typography variant="h5" component="h2" gutterBottom>
-          Total AmarNidhi Amount: ₹{totalAmount}
+          कुल अमरनिधि राशि: ₹{totalAmount}
         </Typography>
 
         <Box mb={4}>
@@ -113,9 +113,9 @@ const AmarNidhiReceipt = () => {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  <MenuItem value="date">Date</MenuItem>
-                  <MenuItem value="month">Month</MenuItem>
-                  <MenuItem value="year">Year</MenuItem>
+                  <MenuItem value="date">दिनांक</MenuItem>
+                  <MenuItem value="month">माह</MenuItem>
+                  <MenuItem value="year">वर्ष</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -152,7 +152,7 @@ const AmarNidhiReceipt = () => {
                     disabled={loading}
                     fullWidth
                   >
-                    Fetch
+                    फिल्टर लागू करें
                   </Button>
                 </Grid>
               </>
@@ -187,7 +187,7 @@ const AmarNidhiReceipt = () => {
                     disabled={loading}
                     fullWidth
                   >
-                    Apply Filter
+                    फिल्टर लागू करें
                   </Button>
                 </Grid>
               </>
@@ -222,7 +222,7 @@ const AmarNidhiReceipt = () => {
                     disabled={loading}
                     fullWidth
                   >
-                    Apply Filter
+                    फिल्टर लागू करें
                   </Button>
                 </Grid>
               </>
@@ -234,11 +234,11 @@ const AmarNidhiReceipt = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Address</TableCell>
-                <TableCell>Amount (Numeric)</TableCell>
-                <TableCell>Amount (Words)</TableCell>
-                <TableCell>Date</TableCell>
+                <TableCell>नाम</TableCell>
+                <TableCell>पता</TableCell>
+                <TableCell>राशि (संख्यात्मक)</TableCell>
+                <TableCell>राशि (शब्दों में)</TableCell>
+                <TableCell>दिनांक</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -257,7 +257,7 @@ const AmarNidhiReceipt = () => {
 
         <Box display="flex" justifyContent="center" mt={2}>
           <Button variant="contained" color="primary" onClick={handleShowMore} disabled={loading}>
-            Show More
+            और दिखाओ
           </Button>
         </Box>
 

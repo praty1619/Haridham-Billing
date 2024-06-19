@@ -15,18 +15,24 @@ const ExpenseRaseed = () => {
     tips: ''
   });
 
-  const [counter, setCounter] = useState(() => {
-    // Initialize counter from local storage or start from 1 if not found
-    const savedCounter = localStorage.getItem('expenseCounter');
-    return savedCounter ? parseInt(savedCounter, 10) : 1;
-  });
+  const [latestId, setLatestId] = useState(0);
+
 
   const formRef = useRef();
 
   useEffect(() => {
-    // Save counter to local storage whenever it changes
-    localStorage.setItem('expenseCounter', counter);
-  }, [counter]);
+    const fetchLatestId = async () => {
+      try {
+        const response = await fetch('/api/expense/latestId');
+        const result = await response.json();
+        setLatestId(result.latestId);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchLatestId();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -58,12 +64,12 @@ const ExpenseRaseed = () => {
     formRef.current.reset();
 
     // Increment the counter for the next receipt
-    setCounter(prevCounter => prevCounter + 1);
+    setLatestId(prevId => prevId + 1);
   };
 
   const handleDownload = () => {
     const { name, address, category, amountNumeric, amountWords, date, notes, tips } = formData;
-    const receiptId = `${counter}E`;
+    const receiptId = `${latestId + 1}E`; // Use the latest ID + 1 for the new receipt
     const pdf = new jsPDF();
   
     // Add a border to the page
@@ -77,10 +83,11 @@ const ExpenseRaseed = () => {
   
     pdf.setFontSize(14);
     pdf.setFont('Times', 'Normal');
-    pdf.text('Gram-Maulanpur, Post-Ganva, Distt. Sambhal (U.P.)', pdf.internal.pageSize.getWidth() / 2, 40, { align: 'center' });
+    pdf.text('Gram-Maulanpur, Post-Gawan, Distt. Sambhal (U.P.)', pdf.internal.pageSize.getWidth() / 2, 40, { align: 'center' });
   
     pdf.setFontSize(12);
     pdf.text(`Date: ${date}`, pdf.internal.pageSize.getWidth() / 2, 60, { align: 'center' });
+    pdf.text(`Reciept ID: ${receiptId}`, pdf.internal.pageSize.getWidth() / 8, 70, { align: 'left' });
   
     // Add recipient information
     pdf.setFontSize(16);
@@ -98,37 +105,33 @@ const ExpenseRaseed = () => {
     // Draw boxes around fields
     pdf.setLineWidth(0.5);
   
-    pdf.text('Receipt ID:', fieldX, 90);
+    pdf.text('Shri/Smt:', fieldX, 90);
     pdf.rect(fieldX, 92, fieldWidth, fieldHeight);
-    pdf.text(receiptId, fieldX + 2, 100);
+    pdf.text(name, fieldX + 2, 100);
   
-    pdf.text('Shri/Smt:', fieldX, 110);
+    pdf.text('Niwasi:', fieldX, 110);
     pdf.rect(fieldX, 112, fieldWidth, fieldHeight);
-    pdf.text(name, fieldX + 2, 120);
+    pdf.text(address, fieldX + 2, 120);
   
-    pdf.text('Niwasi:', fieldX, 130);
+    pdf.text('MadNaam:', fieldX, 130);
     pdf.rect(fieldX, 132, fieldWidth, fieldHeight);
-    pdf.text(address, fieldX + 2, 140);
+    pdf.text(category, fieldX + 2, 140);
   
-    pdf.text('MadNaam:', fieldX, 150);
+    pdf.text('Rashi (Ankan):', fieldX, 150);
     pdf.rect(fieldX, 152, fieldWidth, fieldHeight);
-    pdf.text(category, fieldX + 2, 160);
+    pdf.text(amountNumeric, fieldX + 2, 160);
   
-    pdf.text('Rashi (Ankan):', fieldX, 170);
+    pdf.text('Rashi (Shabdo Me):', fieldX, 170);
     pdf.rect(fieldX, 172, fieldWidth, fieldHeight);
-    pdf.text(amountNumeric, fieldX + 2, 180);
+    pdf.text(amountWords, fieldX + 2, 180);
   
-    pdf.text('Rashi (Shabdo Me):', fieldX, 190);
+    pdf.text('Notes:', fieldX, 190);
     pdf.rect(fieldX, 192, fieldWidth, fieldHeight);
-    pdf.text(amountWords, fieldX + 2, 200);
+    pdf.text(notes, fieldX + 2, 200);
   
-    pdf.text('Notes:', fieldX, 210);
+    pdf.text('Tips:', fieldX, 210);
     pdf.rect(fieldX, 212, fieldWidth, fieldHeight);
-    pdf.text(notes, fieldX + 2, 220);
-  
-    pdf.text('Tips:', fieldX, 230);
-    pdf.rect(fieldX, 232, fieldWidth, fieldHeight);
-    pdf.text(tips, fieldX + 2, 240);
+    pdf.text(tips, fieldX + 2, 220);
 
     // Add signature field
     pdf.setFontSize(12);
@@ -146,7 +149,7 @@ const ExpenseRaseed = () => {
     <Container maxWidth="sm">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
         <Typography variant="h5" component="h2" gutterBottom>
-          Expense Raseed
+          व्यय रसीद
         </Typography>
         <form onSubmit={handleSubmit} ref={formRef}>
           <Box mb={2}>
@@ -180,35 +183,35 @@ const ExpenseRaseed = () => {
               required
             >
               <MenuItem value="">
-                <em>Select a category</em>
+                <em>मदनाम चुने</em>
               </MenuItem>
-              <MenuItem value="Machinery Marammat Sir">Machinery Marammat Sir</MenuItem>
-              <MenuItem value="Khad Beej Sir">Khad Beej Sir</MenuItem>
-              <MenuItem value="Labour Sir">Labour Sir</MenuItem>
-              <MenuItem value="Sir Labour Mandeya">Sir Labour Mandeya</MenuItem>
-              <MenuItem value="Gaushala Labour Mandeya">Gaushala Labour Mandeya</MenuItem>
-              <MenuItem value="Gaushala Bhusa aur Chara">Gaushala Bhusa aur Chara</MenuItem>
-              <MenuItem value="Sankirtan Anya">Sankirtan Anya</MenuItem>
-              <MenuItem value="Sankirtan Gass">Sankirtan Gass</MenuItem>
-              <MenuItem value="B.R Singh ji Khata">B.R Singh ji Khata</MenuItem>
-              <MenuItem value="Land and Building Bhandara">Land and Building Bhandara</MenuItem>
-              <MenuItem value="Sankirtan Labour Khata">Sankirtan Labour Khata</MenuItem>
-              <MenuItem value="Diesel Khata">Diesel Khata</MenuItem>
-              <MenuItem value="Light Generator Marammat Khata">Light Generator Marammat Khata</MenuItem>
-              <MenuItem value="Sankirtan Rashan Khata">Sankirtan Rashan Khata</MenuItem>
-              <MenuItem value="Sankirtan Khata Mandeya">Sankirtan Khata Mandeya</MenuItem>
-              <MenuItem value="Vidya Peeth Mandeya">Vidya Peeth Mandeya</MenuItem>
-              <MenuItem value="Park Maintenance Khata">Park Maintenance Khata</MenuItem>
-              <MenuItem value="Building Marammat Khata">Building Marammat Khata</MenuItem>
-              <MenuItem value="Vidyalaya Others Kharcha">Vidyalaya Others Kharcha</MenuItem>
-              <MenuItem value="Sankirtan Gehu Labour">Sankirtan Gehu Labour</MenuItem>
-              <MenuItem value="Sankirtan Sabji">Sankirtan Sabji</MenuItem>
-              <MenuItem value="Gaushala Dawai and Others">Gaushala Dawai and Others</MenuItem>
-              <MenuItem value="Gaushala Khal">Gaushala Khal</MenuItem>
-              <MenuItem value="Sankirtan Khata Doodh">Sankirtan Khata Doodh</MenuItem>
-              <MenuItem value="Atul Sharma Khata">Atul Sharma Khata</MenuItem>
-              <MenuItem value="Ramesh Bhagatji Khata">Ramesh Bhagatji Khata</MenuItem>
-              <MenuItem value="Gaushala Building Ped">Gaushala Building Ped</MenuItem>
+              <MenuItem value="Machinery Marammat Sir">मशीनरी मरम्मत सीर</MenuItem>
+              <MenuItem value="Khad Beej Sir">खाद बीज सीर</MenuItem>
+              <MenuItem value="Labour Sir">लेबर सीर</MenuItem>
+              <MenuItem value="Sir Labour Mandeya">सीर लेबर मानदेय</MenuItem>
+              <MenuItem value="Gaushala Labour Mandeya">गौशाला लेबर मानदेय</MenuItem>
+              <MenuItem value="Gaushala Bhusa aur Chara">गौशाला भूसा और चारा</MenuItem>
+              <MenuItem value="Sankirtan Anya">संकीर्तन अन्य</MenuItem>
+              <MenuItem value="Sankirtan Gass">संकीर्तन गैस</MenuItem>
+              <MenuItem value="B.R Singh Ji Khata">बी.आर सिंह जि खाता</MenuItem>
+              <MenuItem value="Land and Building Bhandara">लैंड एंड बिल्डिंग भंडारा</MenuItem>
+              <MenuItem value="Sankirtan Labour Khata">संकीर्तन लेबर खता</MenuItem>
+              <MenuItem value="Diesel Khata">डीजल खाता</MenuItem>
+              <MenuItem value="Light Generator Marammat Khata">लाइट जनरेटर मरम्मत खता</MenuItem>
+              <MenuItem value="Sankirtan Rashan Khata">संकीर्तन राशन खता</MenuItem>
+              <MenuItem value="Sankirtan Khata Mandeya">संकीर्तन खता मानदेय</MenuItem>
+              <MenuItem value="Vidya Peeth Mandeya">विद्या पीठ मानदेय</MenuItem>
+              <MenuItem value="Park Maintenance Khata">पार्क मेंटेनेंस खता</MenuItem>
+              <MenuItem value="Building Marammat Khata">बिल्डिंग मरम्मत खता</MenuItem>
+              <MenuItem value="Vidyalaya Others Kharcha">विद्यालय अन्य खर्चा</MenuItem>
+              <MenuItem value="Sankirtan Gehu Labour">संकीर्तन गेहू लेबर</MenuItem>
+              <MenuItem value="Sankirtan Sabji">संकीर्तन सब्जी</MenuItem>
+              <MenuItem value="Gaushala Dawai and Others">गौशाला दवाई एवं अन्य</MenuItem>
+              <MenuItem value="Gaushala Khal">गौशाला खाल</MenuItem>
+              <MenuItem value="Sankirtan Khata Doodh">संकीर्तन खता दूध</MenuItem>
+              <MenuItem value="Atul Sharma Khata">अतुल शर्मा खाता</MenuItem>
+              <MenuItem value="Ramesh Bhagatji Khata">रमेश भगतजी खता</MenuItem>
+              <MenuItem value="Gaushala Building Ped">गौशाला बिल्डिंग पेड़</MenuItem>
             </TextField>
           </Box>
           <Box mb={2}>
@@ -263,10 +266,10 @@ const ExpenseRaseed = () => {
             />
           </Box>
           <Button variant="contained" color="primary" type="submit" style={{ marginRight: '10px' }}>
-            Submit
+            जमा करें
           </Button>
           <Button variant="outlined" color="secondary" onClick={handleDownload}>
-            Download PDF
+            डाउनलोड रसीद
           </Button>
         </form>
       </Paper>

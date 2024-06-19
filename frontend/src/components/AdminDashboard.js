@@ -231,7 +231,7 @@ const AdminDashboard = () => {
           <ul>
             <li>
               <Button fullWidth variant="outlined" onClick={handleIncomeClick}>
-                Income Panel
+                आय पैनल
               </Button>
               <Menu
                 anchorEl={incomeAnchorEl}
@@ -239,41 +239,41 @@ const AdminDashboard = () => {
                 open={Boolean(incomeAnchorEl)}
                 onClose={() => setIncomeAnchorEl(null)}
               >
-                <MenuItem onClick={handleRaseedClick}>Raseed Details</MenuItem>
+                <MenuItem onClick={handleRaseedClick}>रसीद विवरण</MenuItem>
                 <Menu
                   anchorEl={raseedAnchorEl}
                   keepMounted
                   open={Boolean(raseedAnchorEl)}
                   onClose={() => setRaseedAnchorEl(null)}
                 >
-                  <MenuItem onClick={() => handleRaseedClose('raseed')}>Raseed Details Only</MenuItem>
-                  <MenuItem onClick={() => handleRaseedClose('formRecords')}>Raseed Records</MenuItem>
-                  <MenuItem onClick={() => handleRaseedClose('sankirtanKhata')}>Sankirtan Khata</MenuItem>
-                  <MenuItem onClick={() => handleRaseedClose('shriHariGollakKhata')}>Shri Hari Gollak Khata</MenuItem>
-                  <MenuItem onClick={() => handleRaseedClose('bikriKhataGannaSir')}>Bikri Khata Ganna Sir</MenuItem>
-                  <MenuItem onClick={() => handleRaseedClose('bikriKabadSankirtan')}>Bikri Kabad Sankirtan</MenuItem>
-                  <MenuItem onClick={() => handleRaseedClose('gawshalaRaseedKhata')}>Gawshala Raseed Khata</MenuItem>
-                  <MenuItem onClick={() => handleRaseedClose('landAndBuildingKhata')}>Land and Building Khata</MenuItem>
-                  <MenuItem onClick={() => handleRaseedClose('deleteRecords')}>Delete Raseed Records</MenuItem> {/* Add this line */}
+                  <MenuItem onClick={() => handleRaseedClose('raseed')}>रसीद पर्ची</MenuItem>
+                  <MenuItem onClick={() => handleRaseedClose('formRecords')}>रसीद खता</MenuItem>
+                  <MenuItem onClick={() => handleRaseedClose('sankirtanKhata')}>संकीर्तन खता</MenuItem>
+                  <MenuItem onClick={() => handleRaseedClose('shriHariGollakKhata')}>श्री हरि गोलक खाता</MenuItem>
+                  <MenuItem onClick={() => handleRaseedClose('bikriKhataGannaSir')}>बिकरी खाता गन्ना सीर</MenuItem>
+                  <MenuItem onClick={() => handleRaseedClose('bikriKabadSankirtan')}>बिक्री कबाड़ संकीर्तन</MenuItem>
+                  <MenuItem onClick={() => handleRaseedClose('gawshalaRaseedKhata')}>गौशाला रसीद खाता</MenuItem>
+                  <MenuItem onClick={() => handleRaseedClose('landAndBuildingKhata')}>लैंड एंड बिल्डिंग खाता</MenuItem>
+                  <MenuItem onClick={() => handleRaseedClose('deleteRecords')}>डिलीट रसीद खता</MenuItem> {/* Add this line */}
                 </Menu>
-                <MenuItem onClick={handleAmarNidhiClick}>AmarNidhi</MenuItem>
+                <MenuItem onClick={handleAmarNidhiClick}>अमरनिधि विवरण</MenuItem>
                 <Menu
                   anchorEl={amarNidhiAnchorEl}
                   keepMounted
                   open={Boolean(amarNidhiAnchorEl)}
                   onClose={() => handleAmarNidhiClose(null)}
                 >
-                  <MenuItem onClick={() => handleAmarNidhiClose('amarNidhi')}>AmarNidhi</MenuItem>
-                  <MenuItem onClick={() => handleAmarNidhiClose('fixedDeposit')}>Fixed Deposit</MenuItem>
-                  <MenuItem onClick={() => handleAmarNidhiClose('total')}>Total</MenuItem>
-                  <MenuItem onClick={() => handleAmarNidhiClose('amarNidhiReceipt')}>AmarNidhi Receipt</MenuItem>
-                  <MenuItem onClick={() => handleAmarNidhiClose('amarNidhiDelete')}>Delete AmarNidhi Records</MenuItem>
+                  <MenuItem onClick={() => handleAmarNidhiClose('amarNidhi')}>अमरनिधि रसीद</MenuItem>
+                  <MenuItem onClick={() => handleAmarNidhiClose('fixedDeposit')}>फिक्स्ड डिपोसिट</MenuItem>
+                  <MenuItem onClick={() => handleAmarNidhiClose('total')}>कुल एफ.डी.</MenuItem>
+                  <MenuItem onClick={() => handleAmarNidhiClose('amarNidhiReceipt')}>अमरनिधि रसीद खाता</MenuItem>
+                  <MenuItem onClick={() => handleAmarNidhiClose('amarNidhiDelete')}>डिलीट अमरनिधि खाता</MenuItem>
                 </Menu>
               </Menu>
             </li>
             <li>
               <Button fullWidth variant="outlined" onClick={handleExpenseClick}>
-                Expense Panel
+                व्यय पैनल
               </Button>
               <Menu
                 anchorEl={expenseAnchorEl}
@@ -281,40 +281,40 @@ const AdminDashboard = () => {
                 open={Boolean(expenseAnchorEl)}
                 onClose={() => setExpenseAnchorEl(null)}
               >
-                <MenuItem onClick={() => handleExpenseClose('expenseRaseed')}>Expense Raseed</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('expenseRecords')}>Expense Records</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('expenseDelete')}>Delete Expense Records</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('atulSharmaKhata')}>Atul Sharma Khata</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('brSinghJiKhata')}>B.R Singh Ji Khata</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('buildingMarammatKhata')}>Building Marammat Khata</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('dieselKhata')}>Diesel Khata</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('gaushalaBhusaAurChara')}>Gaushala Bhusa aur Chara</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('gaushalaBuildingPed')}>Gaushala Building Ped</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('gaushalaDawaiAndOthers')}>Gaushala Dawai and Others</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('gaushalaLabourMandeya')}>Gaushala Labour Mandeya</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('gaushalaKhal')}>Gaushala Khal</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('khadBeejSir')}>Khad Beej Sir</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('labourSir')}>Labour Sir</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('landAndBuildingBhandara')}>Land And Building Bhandara</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('lightGeneratorMarammatKhata')}>Light Generator Marammat Khata</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('machineryMarammatSir')}>Machinery Marammat Sir</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('parkMaintenanceKhata')}>Park Maintenance Khata</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('rameshBhagatjiKhata')}>Ramesh Bhagatji Khata</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('sankirtanAnya')}>Sankirtan Anya</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('sankirtanGass')}>Sankirtan Gass</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('sankirtanGehuLabour')}>Sankirtan Gehu Labour</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('sankirtanKhataMandeya')}>Sankirtan Khata Mandeya</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('sankirtanLabourKhata')}>Sankirtan Labour Khata</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('sankirtanRashanKhata')}>Sankirtan Rashan Khata</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('sankirtanSabji')}>Sankirtan Sabji</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('sirLabourMandeya')}>Sir Labour Mandeya</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('vidyalayaOthersKharcha')}>Vidyalaya Others Kharcha</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('vidyaPeethMandeya')}>Vidya Peeth Mandeya</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('expenseRaseed')}>व्यय रसीद</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('expenseRecords')}>व्यय खाता</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('atulSharmaKhata')}>अतुल शर्मा खाता</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('brSinghJiKhata')}>बी.आर सिंह जि खाता</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('buildingMarammatKhata')}>बिल्डिंग मरम्मत खाता</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('dieselKhata')}>डीजल खाता</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('gaushalaBhusaAurChara')}>गौशाला भूसा और चारा</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('gaushalaBuildingPed')}>गौशाला बिल्डिंग पेड़</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('gaushalaDawaiAndOthers')}>गौशाला दवाई एवं अन्य</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('gaushalaLabourMandeya')}>गौशाला लेबर मानदेय</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('gaushalaKhal')}>गौशाला खाल</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('khadBeejSir')}>खाद बीज सीर</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('labourSir')}>लेबर सीर</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('landAndBuildingBhandara')}>लैंड एंड बिल्डिंग भंडारा</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('lightGeneratorMarammatKhata')}>लाइट जनरेटर मरम्मत खता</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('machineryMarammatSir')}>मशीनरी मरम्मत सीर</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('parkMaintenanceKhata')}>पार्क मेंटेनेंस खता</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('rameshBhagatjiKhata')}>रमेश भगतजी खता</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('sankirtanAnya')}>संकीर्तन अन्य</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('sankirtanGass')}>संकीर्तन गैस</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('sankirtanGehuLabour')}>संकीर्तन गेहू लेबर</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('sankirtanKhataMandeya')}>संकीर्तन खता मानदेय</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('sankirtanLabourKhata')}>संकीर्तन लेबर खता</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('sankirtanRashanKhata')}>संकीर्तन राशन खता</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('sankirtanSabji')}>संकीर्तन सब्जी</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('sirLabourMandeya')}>सीर लेबर मानदेय</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('vidyalayaOthersKharcha')}>विद्यालय अन्य खर्चा</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('vidyaPeethMandeya')}>विद्या पीठ मानदेय</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('expenseDelete')}>डिलीट व्यय रिकॉर्ड</MenuItem>
               </Menu>
             </li>
             <li>
               <Button fullWidth variant="outlined" onClick={handleLogout}>
-                Logout
+              लॉग आउट
               </Button>
              </li>
           </ul>

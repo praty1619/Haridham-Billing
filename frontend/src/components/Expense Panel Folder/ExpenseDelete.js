@@ -111,7 +111,7 @@ const ExpenseRecords = () => {
     <Container maxWidth="md">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
         <Typography variant="h6" component="h2" gutterBottom>
-          Expense Records
+        व्यय खाता
         </Typography>
         <Box display="flex" justifyContent="space-between" mb={2}>
           <FormControl style={{ width: '23%' }}>
@@ -124,10 +124,10 @@ const ExpenseRecords = () => {
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
-              <MenuItem value="category">Category</MenuItem>
-              <MenuItem value="date">Date</MenuItem>
-              <MenuItem value="month">Month</MenuItem>
-              <MenuItem value="year">Year</MenuItem>
+              <MenuItem value="category">मदनाम चुने</MenuItem>
+              <MenuItem value="date">दिनांक</MenuItem>
+              <MenuItem value="month">माह</MenuItem>
+              <MenuItem value="year">वर्ष</MenuItem>
             </Select>
           </FormControl>
           {filters.filterType === 'category' && (
@@ -142,10 +142,33 @@ const ExpenseRecords = () => {
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
-              <MenuItem value="Office Supplies">Office Supplies</MenuItem>
-              <MenuItem value="Maintenance">Maintenance</MenuItem>
-              <MenuItem value="Utility Bills">Utility Bills</MenuItem>
-              <MenuItem value="Miscellaneous">Miscellaneous</MenuItem>
+              <MenuItem value="Machinery Marammat Sir">मशीनरी मरम्मत सीर</MenuItem>
+              <MenuItem value="Khad Beej Sir">खाद बीज सीर</MenuItem>
+              <MenuItem value="Labour Sir">लेबर सीर</MenuItem>
+              <MenuItem value="Sir Labour Mandeya">सीर लेबर मानदेय</MenuItem>
+              <MenuItem value="Gaushala Labour Mandeya">गौशाला लेबर मानदेय</MenuItem>
+              <MenuItem value="Gaushala Bhusa aur Chara">गौशाला भूसा और चारा</MenuItem>
+              <MenuItem value="Sankirtan Anya">संकीर्तन अन्य</MenuItem>
+              <MenuItem value="Sankirtan Gass">संकीर्तन गैस</MenuItem>
+              <MenuItem value="B.R Singh Ji Khata">बी.आर सिंह जि खाता</MenuItem>
+              <MenuItem value="Land and Building Bhandara">लैंड एंड बिल्डिंग भंडारा</MenuItem>
+              <MenuItem value="Sankirtan Labour Khata">संकीर्तन लेबर खता</MenuItem>
+              <MenuItem value="Diesel Khata">डीजल खाता</MenuItem>
+              <MenuItem value="Light Generator Marammat Khata">लाइट जनरेटर मरम्मत खता</MenuItem>
+              <MenuItem value="Sankirtan Rashan Khata">संकीर्तन राशन खता</MenuItem>
+              <MenuItem value="Sankirtan Khata Mandeya">संकीर्तन खता मानदेय</MenuItem>
+              <MenuItem value="Vidya Peeth Mandeya">विद्या पीठ मानदेय</MenuItem>
+              <MenuItem value="Park Maintenance Khata">पार्क मेंटेनेंस खता</MenuItem>
+              <MenuItem value="Building Marammat Khata">बिल्डिंग मरम्मत खता</MenuItem>
+              <MenuItem value="Vidyalaya Others Kharcha">विद्यालय अन्य खर्चा</MenuItem>
+              <MenuItem value="Sankirtan Gehu Labour">संकीर्तन गेहू लेबर</MenuItem>
+              <MenuItem value="Sankirtan Sabji">संकीर्तन सब्जी</MenuItem>
+              <MenuItem value="Gaushala Dawai and Others">गौशाला दवाई एवं अन्य</MenuItem>
+              <MenuItem value="Gaushala Khal">गौशाला खाल</MenuItem>
+              <MenuItem value="Sankirtan Khata Doodh">संकीर्तन खता दूध</MenuItem>
+              <MenuItem value="Atul Sharma Khata">अतुल शर्मा खाता</MenuItem>
+              <MenuItem value="Ramesh Bhagatji Khata">रमेश भगतजी खता</MenuItem>
+              <MenuItem value="Gaushala Building Ped">गौशाला बिल्डिंग पेड़</MenuItem>
             </TextField>
           )}
           {filters.filterType === 'date' && (
@@ -200,7 +223,7 @@ const ExpenseRecords = () => {
             </TextField>
           )}
           <Button variant="contained" color="primary" onClick={handleFilter}>
-            Apply Filters
+            फ़िल्टर लागू करें
           </Button>
         </Box>
         {loading && <Typography>Loading...</Typography>}
@@ -211,15 +234,15 @@ const ExpenseRecords = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Select</TableCell>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Address</TableCell>
-                    <TableCell>Category</TableCell>
-                    <TableCell>Amount (Numeric)</TableCell>
-                    <TableCell>Amount (Words)</TableCell>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Notes</TableCell>
-                    <TableCell>Tips</TableCell>
+                    <TableCell>चुने</TableCell>
+                    <TableCell>नाम</TableCell>
+                    <TableCell>पता</TableCell>
+                    <TableCell>मदनाम चुने</TableCell>
+                    <TableCell>राशि (संख्यात्मक)</TableCell>
+                    <TableCell>राशि (शब्दों में)</TableCell>
+                    <TableCell>दिनांक</TableCell>
+                    <TableCell>टिप्पणियाँ</TableCell>
+                    <TableCell>सुझाव</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -251,12 +274,12 @@ const ExpenseRecords = () => {
                 onClick={handleDeleteSelected}
                 disabled={selectedRecords.length === 0}
               >
-                Delete Selected
+                व्यय रिकॉर्ड हटाएं
               </Button>
             </Box>
             <Box display="flex" justifyContent="center" mt={2}>
               <Button variant="contained" color="primary" onClick={handleShowMore} disabled={loading}>
-                Show More
+              और दिखाओ
               </Button>
             </Box>
           </>

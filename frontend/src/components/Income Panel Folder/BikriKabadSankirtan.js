@@ -65,7 +65,7 @@ const BikriKabadSankirtan = () => {
     <Container maxWidth="md">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
         <Typography variant="h6" component="h2" gutterBottom>
-          Bikri Kabad Sankirtan Records
+          बिक्री कबाड संकीर्तन
         </Typography>
         <Box display="flex" justifyContent="space-between" mb={2}>
           <FormControl style={{ width: '23%' }}>
@@ -78,9 +78,9 @@ const BikriKabadSankirtan = () => {
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
-              <MenuItem value="date">Date</MenuItem>
-              <MenuItem value="month">Month</MenuItem>
-              <MenuItem value="year">Year</MenuItem>
+              <MenuItem value="date">दिनांक</MenuItem>
+              <MenuItem value="month">माह</MenuItem>
+              <MenuItem value="year">वर्ष</MenuItem>
             </Select>
           </FormControl>
           {filters.filterType === 'date' && (
@@ -135,7 +135,7 @@ const BikriKabadSankirtan = () => {
             </TextField>
           )}
           <Button variant="contained" color="primary" onClick={handleFilter}>
-            Apply Filters
+            फ़िल्टर लागू करें
           </Button>
         </Box>
         {loading && <Typography>Loading...</Typography>}
@@ -145,12 +145,12 @@ const BikriKabadSankirtan = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Address</TableCell>
-                  <TableCell>Category</TableCell>
-                  <TableCell>Amount (Numeric)</TableCell>
-                  <TableCell>Amount (Words)</TableCell>
-                  <TableCell>Date</TableCell>
+                  <TableCell>नाम</TableCell>
+                  <TableCell>पता</TableCell>
+                  <TableCell>बाबत्त</TableCell>
+                  <TableCell>राशि (संख्यात्मक)</TableCell>
+                  <TableCell>राशि (शब्दों में)</TableCell>
+                  <TableCell>दिनांक</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

@@ -13,18 +13,23 @@ const FormComponent = () => {
     date: ''
   });
 
-  const [counter, setCounter] = useState(() => {
-    // Initialize counter from local storage or start from 1 if not found
-    const savedCounter = localStorage.getItem('receiptCounter');
-    return savedCounter ? parseInt(savedCounter, 10) : 1;
-  });
+  const [latestId, setLatestId] = useState(0);
 
   const formRef = useRef();
 
   useEffect(() => {
-    // Save counter to local storage whenever it changes
-    localStorage.setItem('receiptCounter', counter);
-  }, [counter]);
+    const fetchLatestId = async () => {
+      try {
+        const response = await fetch('/api/forms/latestId');
+        const result = await response.json();
+        setLatestId(result.latestId);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchLatestId();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -40,7 +45,6 @@ const FormComponent = () => {
     const result = await response.json();
     console.log(result);
 
-    // Clear the form
     setFormData({
       name: '',
       address: '',
@@ -50,84 +54,72 @@ const FormComponent = () => {
       date: ''
     });
 
-    // Clear the form fields visually
     formRef.current.reset();
 
-    // Increment the counter for the next receipt
-    setCounter(prevCounter => prevCounter + 1);
+    setLatestId(prevId => prevId + 1); // Increment the local latest ID
   };
 
   const handleDownload = () => {
     const { name, address, category, amountNumeric, amountWords, date } = formData;
-    const receiptId = `${counter}I`;
+    const receiptId = `${latestId + 1}I`; // Use the latest ID + 1 for the new receipt
     const pdf = new jsPDF();
-  
-    // Add a border to the page
+
     pdf.setLineWidth(1);
     pdf.rect(10, 10, 190, 277); // Rect(x, y, width, height)
-  
-    // Add title and heading
+
     pdf.setFontSize(22);
     pdf.setFont('Times', 'Bold');
     pdf.text('Shree Haribandh Dham Trust Samiti (Reg.)', pdf.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
-  
+
     pdf.setFontSize(14);
     pdf.setFont('Times', 'Normal');
-    pdf.text('Gram-Maulanpur, Post-Ganva, Distt. Sambhal (U.P.)', pdf.internal.pageSize.getWidth() / 2, 40, { align: 'center' });
-  
+    pdf.text('Gram-Maulanpur, Post-Gawan, Distt. Sambhal (U.P.)', pdf.internal.pageSize.getWidth() / 2, 40, { align: 'center' });
+
     pdf.setFontSize(12);
     pdf.text(`Date: ${date}`, pdf.internal.pageSize.getWidth() / 2, 60, { align: 'center' });
-  
-    // Add recipient information
+    pdf.text(`Reciept ID: ${receiptId}`, pdf.internal.pageSize.getWidth() / 8, 70, { align: 'left' });
+
     pdf.setFontSize(16);
     pdf.setFont('Times', 'Bold');
     pdf.text('Raseed Details', 20, 80);
-  
+
     pdf.setFontSize(14);
     pdf.setFont('Times', 'Normal');
-  
-    // Draw rectangles for fields to make them stand out
+
     const fieldX = 20;
     const fieldWidth = 170;
     const fieldHeight = 10;
-  
-    // Draw boxes around fields
+
     pdf.setLineWidth(0.5);
-  
-    pdf.text('Receipt ID:', fieldX, 90);
+    
+    pdf.text('Shri/Smt:', fieldX, 90);
     pdf.rect(fieldX, 92, fieldWidth, fieldHeight);
-    pdf.text(receiptId, fieldX + 2, 100);
-  
-    pdf.text('Shri/Smt:', fieldX, 110);
+    pdf.text(name, fieldX + 2, 100);
+
+    pdf.text('Niwasi:', fieldX, 110);
     pdf.rect(fieldX, 112, fieldWidth, fieldHeight);
-    pdf.text(name, fieldX + 2, 120);
-  
-    pdf.text('Niwasi:', fieldX, 130);
+    pdf.text(address, fieldX + 2, 120);
+
+    pdf.text('Babat:', fieldX, 130);
     pdf.rect(fieldX, 132, fieldWidth, fieldHeight);
-    pdf.text(address, fieldX + 2, 140);
-  
-    pdf.text('Babat:', fieldX, 150);
+    pdf.text(category, fieldX + 2, 140);
+
+    pdf.text('Rashi (Ankan):', fieldX, 150);
     pdf.rect(fieldX, 152, fieldWidth, fieldHeight);
-    pdf.text(category, fieldX + 2, 160);
-  
-    pdf.text('Rashi (Ankan):', fieldX, 170);
+    pdf.text(amountNumeric, fieldX + 2, 160);
+
+    pdf.text('Rashi (Shabdo Me):', fieldX, 170);
     pdf.rect(fieldX, 172, fieldWidth, fieldHeight);
-    pdf.text(amountNumeric, fieldX + 2, 180);
-  
-    pdf.text('Rashi (Shabdo Me):', fieldX, 190);
-    pdf.rect(fieldX, 192, fieldWidth, fieldHeight);
-    pdf.text(amountWords, fieldX + 2, 200);
-  
-    // Add signature field
+    pdf.text(amountWords, fieldX + 2, 180);
+
     pdf.setFontSize(12);
     pdf.setFont('Times', 'Normal');
     pdf.text('Signature:', 20, 250);
-  
-    // Add footer or any additional information
+
     pdf.setFontSize(10);
     pdf.setTextColor(100);
     pdf.text('Thank you for your contribution!', pdf.internal.pageSize.getWidth() / 2, 270, { align: 'center' });
-  
+
     pdf.save('receipt.pdf');
   };
 
@@ -135,7 +127,7 @@ const FormComponent = () => {
     <Container maxWidth="sm">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
         <Typography variant="h5" component="h2" gutterBottom>
-          Raseed
+        रसीद पर्ची
         </Typography>
         <form onSubmit={handleSubmit} ref={formRef}>
           <Box mb={2}>
@@ -169,14 +161,14 @@ const FormComponent = () => {
               required
             >
               <MenuItem value="">
-                <em>Select a category</em>
+                <em>बाबत्त</em>
               </MenuItem>
-              <MenuItem value="Sankirtan Khata">Sankirtan Khata</MenuItem>
-              <MenuItem value="Shri Hari Gollak Khata">Shri Hari Gollak Khata</MenuItem>
-              <MenuItem value="Bikri Khata Ganna sir">Bikri Khata Ganna sir</MenuItem>
-              <MenuItem value="Bikri Kabad Sankirtan">Bikri Kabad Sankirtan</MenuItem>
-              <MenuItem value="Gawshala Raseed Khata">Gawshala Raseed Khata</MenuItem>
-              <MenuItem value="Land and Building Khata">Land and Building Khata</MenuItem>
+              <MenuItem value="Sankirtan Khata">संकीर्तन खाता</MenuItem>
+              <MenuItem value="Shri Hari Gollak Khata">श्री हरि गोलक खाता</MenuItem>
+              <MenuItem value="Bikri Khata Ganna sir">बिकरी खाता गन्ना सीर</MenuItem>
+              <MenuItem value="Bikri Kabad Sankirtan">बिक्री कबाड़ संकीर्तन</MenuItem>
+              <MenuItem value="Gawshala Raseed Khata">गौशाला रसीद खाता</MenuItem>
+              <MenuItem value="Land and Building Khata">लैंड एंड बिल्डिंग खाता</MenuItem>
             </TextField>
           </Box>
           <Box mb={2}>
@@ -213,10 +205,10 @@ const FormComponent = () => {
             />
           </Box>
           <Button variant="contained" color="primary" type="submit" style={{ marginRight: '10px' }}>
-            Submit
+          जमा करें
           </Button>
           <Button variant="outlined" color="secondary" onClick={handleDownload}>
-            Download PDF
+            डाउनलोड रसीद
           </Button>
         </form>
       </Paper>

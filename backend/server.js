@@ -195,6 +195,19 @@ app.get('/api/admin-dashboard', verifyToken, (req, res) => {
 
 // For CRUD OPERATIONS
 // Endpoint to handle form submission for ExpenseRaseed
+
+// Endpoint to fetch the latest ID
+app.get('/api/expense/latestId', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT MAX(id) as latestId FROM expense_forms'); // replace `forms` with your actual table name
+    const latestId = rows[0].latestid || 0; // Get the latest ID or default to 0 if none found
+    res.json({ latestId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.post('/submit-expense', (req, res) => {
   const { name, address, category, amountNumeric, amountWords, date, notes, tips } = req.body;
   const sql = 'INSERT INTO expense_forms (name, address, category, amountNumeric, amountWords, date, notes, tips) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)';
@@ -277,6 +290,17 @@ app.get('/api/expense/totalAmount', async (req, res) => {
   }
 });
 
+// Endpoint to fetch the latest ID
+app.get('/api/forms/latestId', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT MAX(id) as latestId FROM forms'); // replace `forms` with your actual table name
+    const latestId = rows[0].latestid || 0; // Get the latest ID or default to 0 if none found
+    res.json({ latestId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 app.post('/submit-form', (req, res) => {
   const { name, address, category, amountNumeric, amountWords, date } = req.body;
@@ -365,6 +389,18 @@ app.get('/api/forms/totalAmount', async (req, res) => {
     const { rows } = await pool.query(query, queryParams);
     const totalAmount = rows[0].totalamount || 0;
     res.json({ totalAmount });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Endpoint to fetch the latest ID
+app.get('/api/amarNidhi/latestId', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT MAX(id) as latestId FROM amar_nidhi'); // replace `forms` with your actual table name
+    const latestId = rows[0].latestid || 0; // Get the latest ID or default to 0 if none found
+    res.json({ latestId });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });

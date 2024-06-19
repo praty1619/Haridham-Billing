@@ -114,10 +114,10 @@ const FormRecords = () => {
     <Container maxWidth="md">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
         <Typography variant="h6" component="h2" gutterBottom>
-          Total Amount: ₹{totalAmount}
+        कुल राशि: ₹{totalAmount}
         </Typography>
         <Typography variant="h6" component="h2" gutterBottom>
-          Raseed Records
+        रसीद खता
         </Typography>
         <Box display="flex" justifyContent="space-between" mb={2}>
           <FormControl style={{ width: '23%' }}>
@@ -130,10 +130,10 @@ const FormRecords = () => {
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
-              <MenuItem value="category">Category</MenuItem>
-              <MenuItem value="date">Date</MenuItem>
-              <MenuItem value="month">Month</MenuItem>
-              <MenuItem value="year">Year</MenuItem>
+              <MenuItem value="category">बाबत्त</MenuItem>
+              <MenuItem value="date">दिनांक</MenuItem>
+              <MenuItem value="month">माह</MenuItem>
+              <MenuItem value="year">वर्ष</MenuItem>
             </Select>
           </FormControl>
           {filters.filterType === 'category' && (
@@ -148,12 +148,12 @@ const FormRecords = () => {
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
-              <MenuItem value="Sankirtan Khata">Sankirtan Khata</MenuItem>
-              <MenuItem value="Shri Hari Gollak Khata">Shri Hari Gollak Khata</MenuItem>
-              <MenuItem value="Bikri Khata Ganna sir">Bikri Khata Ganna sir</MenuItem>
-              <MenuItem value="Bikri Kabad Sankirtan">Bikri Kabad Sankirtan</MenuItem>
-              <MenuItem value="Gawshala Raseed Khata">Gawshala Raseed Khata</MenuItem>
-              <MenuItem value="Land and Building Khata">Land and Building Khata</MenuItem>
+              <MenuItem value="Sankirtan Khata">संकीर्तन खाता</MenuItem>
+              <MenuItem value="Shri Hari Gollak Khata">श्री हरि गोलक खाता</MenuItem>
+              <MenuItem value="Bikri Khata Ganna sir">बिकरी खाता गन्ना सीर</MenuItem>
+              <MenuItem value="Bikri Kabad Sankirtan">बिक्री कबाड़ संकीर्तन</MenuItem>
+              <MenuItem value="Gawshala Raseed Khata">गौशाला रसीद खाता</MenuItem>
+              <MenuItem value="Land and Building Khata">लैंड एंड बिल्डिंग खाता</MenuItem>
             </TextField>
           )}
           {filters.filterType === 'date' && (
@@ -208,7 +208,7 @@ const FormRecords = () => {
             </TextField>
           )}
           <Button variant="contained" color="primary" onClick={handleFilter}>
-            Apply Filters
+            फ़िल्टर लागू करें
           </Button>
         </Box>
         {loading && <Typography>Loading...</Typography>}
@@ -219,12 +219,12 @@ const FormRecords = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Address</TableCell>
-                    <TableCell>Category</TableCell>
-                    <TableCell>Amount (Numeric)</TableCell>
-                    <TableCell>Amount (Words)</TableCell>
-                    <TableCell>Date</TableCell>
+                    <TableCell>नाम</TableCell>
+                    <TableCell>पता</TableCell>
+                    <TableCell>बाबत्त</TableCell>
+                    <TableCell>राशि (संख्यात्मक)</TableCell>
+                    <TableCell>राशि (शब्दों में)</TableCell>
+                    <TableCell>दिनांक</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -243,7 +243,7 @@ const FormRecords = () => {
             </TableContainer>
             <Box display="flex" justifyContent="center" mt={2}>
               <Button variant="contained" color="primary" onClick={handleShowMore} disabled={loading}>
-                Show More
+                और दिखाओ
               </Button>
             </Box>
           </>

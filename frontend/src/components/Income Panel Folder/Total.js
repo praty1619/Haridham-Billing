@@ -32,22 +32,22 @@ const Total = () => {
     <Container maxWidth="md">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
         <Typography variant="h5" component="h2" gutterBottom>
-          Total Fixed Deposits
+          कुल एफ.डी.
         </Typography>
         {error && <Typography color="error">{error}</Typography>}
         {loading ? (
           <CircularProgress />
         ) : (
           <div>
-            <Typography variant="h6">Total Amount: ₹{total}</Typography>
+            <Typography variant="h6">कुल राशि: ₹{total}</Typography>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Bank Name</TableCell>
-                  <TableCell>Account Number</TableCell>
-                  <TableCell>FDR Number</TableCell>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Amount</TableCell>
+                  <TableCell>बैंक का नाम</TableCell>
+                  <TableCell>खाता नंबर</TableCell>
+                  <TableCell>एफ.डी.आर नम्बर</TableCell>
+                  <TableCell>दिनांक</TableCell>
+                  <TableCell>राशि</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

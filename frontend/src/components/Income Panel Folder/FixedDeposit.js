@@ -56,7 +56,7 @@ const FixedDeposit = () => {
     <Container maxWidth="sm">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
         <Typography variant="h5" component="h2" gutterBottom>
-          Fixed Deposit
+          फिक्स्ड डिपोसिट
         </Typography>
         {error && <Typography color="error">{error}</Typography>}
         <form onSubmit={handleSubmit}>

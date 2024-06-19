@@ -12,18 +12,23 @@ const AmarNidhi = () => {
     date: '',
   });
 
-  const [counter, setCounter] = useState(() => {
-    // Initialize counter from local storage or start from 1 if not found
-    const savedCounter = localStorage.getItem('amarNidhiCounter');
-    return savedCounter ? parseInt(savedCounter, 10) : 1;
-  });
+  const [latestId, setLatestId] = useState(0);
 
   const formRef = useRef();
 
   useEffect(() => {
-    // Save counter to local storage whenever it changes
-    localStorage.setItem('amarNidhiCounter', counter);
-  }, [counter]);
+    const fetchLatestId = async () => {
+      try {
+        const response = await fetch('/api/amarNidhi/latestId');
+        const result = await response.json();
+        setLatestId(result.latestId);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchLatestId();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -51,13 +56,12 @@ const AmarNidhi = () => {
     // Clear the form fields visually
     formRef.current.reset();
 
-    // Increment the counter for the next receipt
-    setCounter(prevCounter => prevCounter + 1);
+    setLatestId(prevId => prevId + 1);
   };
 
   const handleDownload = () => {
     const { name, address, amountNumeric, amountWords, date } = formData;
-    const receiptId = `${counter}A`;
+    const receiptId = `${latestId + 1}A`; // Use the latest ID + 1 for the new receipt
     const pdf = new jsPDF();
 
     // Add a border to the page
@@ -71,10 +75,11 @@ const AmarNidhi = () => {
 
     pdf.setFontSize(14);
     pdf.setFont('Times', 'Normal');
-    pdf.text('Gram-Maulanpur, Post-Ganva, Distt. Sambhal (U.P.)', pdf.internal.pageSize.getWidth() / 2, 40, { align: 'center' });
+    pdf.text('Gram-Maulanpur, Post-Gawan, Distt. Sambhal (U.P.)', pdf.internal.pageSize.getWidth() / 2, 40, { align: 'center' });
 
     pdf.setFontSize(12);
     pdf.text(`Date: ${date}`, pdf.internal.pageSize.getWidth() / 2, 60, { align: 'center' });
+    pdf.text(`Reciept ID: ${receiptId}`, pdf.internal.pageSize.getWidth() / 8, 70, { align: 'left' });
 
     // Add recipient information
     pdf.setFontSize(16);
@@ -92,25 +97,21 @@ const AmarNidhi = () => {
     // Draw boxes around fields
     pdf.setLineWidth(0.5);
 
-    pdf.text('Receipt ID:', fieldX, 90);
+    pdf.text('Shri/Smt:', fieldX, 90);
     pdf.rect(fieldX, 92, fieldWidth, fieldHeight);
-    pdf.text(receiptId, fieldX + 2, 100);
+    pdf.text(name, fieldX + 2, 100);
 
-    pdf.text('Shri/Smt:', fieldX, 110);
+    pdf.text('Niwasi:', fieldX, 110);
     pdf.rect(fieldX, 112, fieldWidth, fieldHeight);
-    pdf.text(name, fieldX + 2, 120);
+    pdf.text(address, fieldX + 2, 120);
 
-    pdf.text('Niwasi:', fieldX, 130);
+    pdf.text('Rashi (Ankan):', fieldX, 130);
     pdf.rect(fieldX, 132, fieldWidth, fieldHeight);
-    pdf.text(address, fieldX + 2, 140);
+    pdf.text(amountNumeric, fieldX + 2, 140);
 
-    pdf.text('Rashi (Ankan):', fieldX, 150);
+    pdf.text('Rashi (Shabdo Me):', fieldX, 150);
     pdf.rect(fieldX, 152, fieldWidth, fieldHeight);
-    pdf.text(amountNumeric, fieldX + 2, 160);
-
-    pdf.text('Rashi (Shabdo Me):', fieldX, 170);
-    pdf.rect(fieldX, 172, fieldWidth, fieldHeight);
-    pdf.text(amountWords, fieldX + 2, 180);
+    pdf.text(amountWords, fieldX + 2, 160);
 
     // Add signature field
     pdf.setFontSize(12);
@@ -129,7 +130,7 @@ const AmarNidhi = () => {
     <Container maxWidth="sm">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
         <Typography variant="h5" component="h2" gutterBottom>
-          AmarNidhi
+          अमरनिधि
         </Typography>
         <form onSubmit={handleSubmit} ref={formRef}>
           <Box mb={2}>
@@ -192,10 +193,10 @@ const AmarNidhi = () => {
             />
           </Box>
           <Button variant="contained" color="primary" type="submit" style={{ marginRight: '10px' }}>
-            Submit
+            जमा करें
           </Button>
           <Button variant="outlined" color="secondary" onClick={handleDownload}>
-            Download PDF
+            डाउनलोड रसीद
           </Button>
         </form>
       </Paper>
