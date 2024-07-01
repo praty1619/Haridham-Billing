@@ -10,6 +10,7 @@ const ExpenseRaseed = () => {
     category: '',
     amountNumeric: '',
     amountWords: '',
+    mobileno:'',
     date: '',
     notes: '',
     tips: ''
@@ -55,6 +56,7 @@ const ExpenseRaseed = () => {
       category: '',
       amountNumeric: '',
       amountWords: '',
+      mobileno:'',
       date: '',
       notes: '',
       tips: ''
@@ -68,7 +70,7 @@ const ExpenseRaseed = () => {
   };
 
   const handleDownload = () => {
-    const { name, address, category, amountNumeric, amountWords, date, notes, tips } = formData;
+    const { name, address, category, amountNumeric, amountWords, date, mobileno, notes, tips } = formData;
     const receiptId = `${latestId + 1}E`; // Use the latest ID + 1 for the new receipt
     const pdf = new jsPDF();
   
@@ -124,14 +126,18 @@ const ExpenseRaseed = () => {
     pdf.text('Rashi (Shabdo Me):', fieldX, 170);
     pdf.rect(fieldX, 172, fieldWidth, fieldHeight);
     pdf.text(amountWords, fieldX + 2, 180);
-  
-    pdf.text('Notes:', fieldX, 190);
+
+    pdf.text('Mobile No.:', fieldX, 190);
     pdf.rect(fieldX, 192, fieldWidth, fieldHeight);
-    pdf.text(notes, fieldX + 2, 200);
+    pdf.text(mobileno, fieldX + 2, 200);
   
-    pdf.text('Tips:', fieldX, 210);
+    pdf.text('Notes:', fieldX, 210);
     pdf.rect(fieldX, 212, fieldWidth, fieldHeight);
-    pdf.text(tips, fieldX + 2, 220);
+    pdf.text(notes, fieldX + 2, 220);
+  
+    pdf.text('Tips:', fieldX, 230);
+    pdf.rect(fieldX, 232, fieldWidth, fieldHeight);
+    pdf.text(tips, fieldX + 2, 240);
 
     // Add signature field
     pdf.setFontSize(12);
@@ -145,6 +151,7 @@ const ExpenseRaseed = () => {
   
     pdf.save('expense_receipt.pdf');
   };
+  
   return (
     <Container maxWidth="sm">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
@@ -193,7 +200,6 @@ const ExpenseRaseed = () => {
               <MenuItem value="Gaushala Bhusa aur Chara">गौशाला भूसा और चारा</MenuItem>
               <MenuItem value="Sankirtan Anya">संकीर्तन अन्य</MenuItem>
               <MenuItem value="Sankirtan Gass">संकीर्तन गैस</MenuItem>
-              <MenuItem value="B.R Singh Ji Khata">बी.आर सिंह जि खाता</MenuItem>
               <MenuItem value="Land and Building Bhandara">लैंड एंड बिल्डिंग भंडारा</MenuItem>
               <MenuItem value="Sankirtan Labour Khata">संकीर्तन लेबर खता</MenuItem>
               <MenuItem value="Diesel Khata">डीजल खाता</MenuItem>
@@ -209,8 +215,6 @@ const ExpenseRaseed = () => {
               <MenuItem value="Gaushala Dawai and Others">गौशाला दवाई एवं अन्य</MenuItem>
               <MenuItem value="Gaushala Khal">गौशाला खाल</MenuItem>
               <MenuItem value="Sankirtan Khata Doodh">संकीर्तन खता दूध</MenuItem>
-              <MenuItem value="Atul Sharma Khata">अतुल शर्मा खाता</MenuItem>
-              <MenuItem value="Ramesh Bhagatji Khata">रमेश भगतजी खता</MenuItem>
               <MenuItem value="Gaushala Building Ped">गौशाला बिल्डिंग पेड़</MenuItem>
             </TextField>
           </Box>
@@ -231,6 +235,17 @@ const ExpenseRaseed = () => {
               label="Amount (Words)"
               name="amountWords"
               value={formData.amountWords}
+              onChange={handleChange}
+              required
+            />
+          </Box>
+          <Box mb={2}>
+            <TextField
+              fullWidth
+              type='number'
+              label="Mobile No."
+              name="mobileno"
+              value={formData.mobileno}
               onChange={handleChange}
               required
             />

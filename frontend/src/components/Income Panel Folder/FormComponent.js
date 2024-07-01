@@ -10,6 +10,8 @@ const FormComponent = () => {
     category: '',
     amountNumeric: '',
     amountWords: '',
+    mobileno:'',
+    notes:'',
     date: ''
   });
 
@@ -51,6 +53,8 @@ const FormComponent = () => {
       category: '',
       amountNumeric: '',
       amountWords: '',
+      mobileno:'',
+      notes:'',
       date: ''
     });
 
@@ -60,7 +64,7 @@ const FormComponent = () => {
   };
 
   const handleDownload = () => {
-    const { name, address, category, amountNumeric, amountWords, date } = formData;
+    const { name, address, category, amountNumeric, amountWords, mobileno, notes, date } = formData;
     const receiptId = `${latestId + 1}I`; // Use the latest ID + 1 for the new receipt
     const pdf = new jsPDF();
 
@@ -111,6 +115,14 @@ const FormComponent = () => {
     pdf.text('Rashi (Shabdo Me):', fieldX, 170);
     pdf.rect(fieldX, 172, fieldWidth, fieldHeight);
     pdf.text(amountWords, fieldX + 2, 180);
+
+    pdf.text('Mobile No.:', fieldX, 190);
+    pdf.rect(fieldX, 192, fieldWidth, fieldHeight);
+    pdf.text(mobileno, fieldX + 2, 200);
+
+    pdf.text('Notes:', fieldX, 210);
+    pdf.rect(fieldX, 212, fieldWidth, fieldHeight);
+    pdf.text(notes, fieldX + 2, 220);
 
     pdf.setFontSize(12);
     pdf.setFont('Times', 'Normal');
@@ -188,6 +200,27 @@ const FormComponent = () => {
               label="Amount (Words)"
               name="amountWords"
               value={formData.amountWords}
+              onChange={handleChange}
+              required
+            />
+          </Box>
+          <Box mb={2}>
+            <TextField
+              fullWidth
+              type='number'
+              label="Mobile No."
+              name="mobileno"
+              value={formData.mobileno}
+              onChange={handleChange}
+              required
+            />
+          </Box>
+          <Box mb={2}>
+            <TextField
+              fullWidth
+              label="Notes"
+              name="notes"
+              value={formData.notes}
               onChange={handleChange}
               required
             />

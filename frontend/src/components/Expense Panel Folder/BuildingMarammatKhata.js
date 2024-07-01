@@ -142,34 +142,38 @@ const BuildingMarammatKhata = () => {
         {error && <Typography color="error">{error}</Typography>}
         {!loading && !error && (
           <TableContainer component={Paper} style={{ marginTop: '20px' }}>
-            <Table>
-              <TableHead>
-                <TableRow>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                  <TableCell>आई.डी.</TableCell>
                     <TableCell>नाम</TableCell>
                     <TableCell>पता</TableCell>
                     <TableCell>मदनाम चुने</TableCell>
                     <TableCell>राशि (संख्यात्मक)</TableCell>
                     <TableCell>राशि (शब्दों में)</TableCell>
+                    <TableCell>फोन नं</TableCell>
                     <TableCell>दिनांक</TableCell>
                     <TableCell>टिप्पणियाँ</TableCell>
                     <TableCell>सुझाव</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {records.map((record) => (
-                  <TableRow key={record.id}>
-                    <TableCell>{record.name}</TableCell>
-                    <TableCell>{record.address}</TableCell>
-                    <TableCell>{record.category}</TableCell>
-                    <TableCell>{record.amountnumeric}</TableCell>
-                    <TableCell>{record.amountwords}</TableCell>
-                    <TableCell>{new Date(record.date).toLocaleDateString()}</TableCell>
-                    <TableCell>{record.notes}</TableCell>
-                    <TableCell>{record.tips}</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHead>
+                <TableBody>
+                {records.map((record) => (
+                      <TableRow key={record.id}>
+                      <TableCell>{record.id}</TableCell>
+                      <TableCell>{record.name}</TableCell>
+                      <TableCell>{record.address}</TableCell>
+                      <TableCell>{record.category}</TableCell>
+                      <TableCell>{record.amountnumeric}</TableCell>
+                      <TableCell>{record.amountwords}</TableCell>
+                      <TableCell>{record.mobileno}</TableCell>
+                      <TableCell>{new Date(record.date).toLocaleDateString()}</TableCell>
+                      <TableCell>{record.notes}</TableCell>
+                      <TableCell>{record.tips}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
           </TableContainer>
         )}
       </Paper>

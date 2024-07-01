@@ -9,6 +9,8 @@ const AmarNidhi = () => {
     address: '',
     amountNumeric: '1100',
     amountWords: 'One Thousand One Hundred Only',
+    mobileno:'',
+    notes:'',
     date: '',
   });
 
@@ -50,6 +52,8 @@ const AmarNidhi = () => {
       address: '',
       amountNumeric: '1100',
       amountWords: 'One Thousand One Hundred Only',
+      mobileno:'',
+      notes:'',
       date: '',
     });
 
@@ -60,7 +64,7 @@ const AmarNidhi = () => {
   };
 
   const handleDownload = () => {
-    const { name, address, amountNumeric, amountWords, date } = formData;
+    const { name, address, amountNumeric, amountWords, mobileno, notes, date } = formData;
     const receiptId = `${latestId + 1}A`; // Use the latest ID + 1 for the new receipt
     const pdf = new jsPDF();
 
@@ -112,6 +116,14 @@ const AmarNidhi = () => {
     pdf.text('Rashi (Shabdo Me):', fieldX, 150);
     pdf.rect(fieldX, 152, fieldWidth, fieldHeight);
     pdf.text(amountWords, fieldX + 2, 160);
+
+    pdf.text('Mobile No.:', fieldX, 170);
+    pdf.rect(fieldX, 172, fieldWidth, fieldHeight);
+    pdf.text(mobileno, fieldX + 2, 180);
+
+    pdf.text('Notes:', fieldX, 190);
+    pdf.rect(fieldX, 192, fieldWidth, fieldHeight);
+    pdf.text(notes, fieldX + 2, 200);
 
     // Add signature field
     pdf.setFontSize(12);
@@ -178,6 +190,27 @@ const AmarNidhi = () => {
               InputProps={{
                 readOnly: true,
               }}
+            />
+          </Box>
+          <Box mb={2}>
+            <TextField
+              fullWidth
+              type='number'
+              label="Mobile No."
+              name="mobileno"
+              value={formData.mobileno}
+              onChange={handleChange}
+              required
+            />
+          </Box>
+          <Box mb={2}>
+            <TextField
+              fullWidth
+              label="Notes"
+              name="notes"
+              value={formData.notes}
+              onChange={handleChange}
+              required
             />
           </Box>
           <Box mb={2}>

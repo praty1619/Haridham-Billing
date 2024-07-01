@@ -3,6 +3,7 @@ import {
   Container, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   TextField, Button, Box, Grid, MenuItem, Select, FormControl, InputLabel, Checkbox
 } from '@mui/material';
+import { jsPDF } from 'jspdf';
 
 const AmarNidhiDelete = () => {
   const [records, setRecords] = useState([]);
@@ -106,6 +107,82 @@ const AmarNidhiDelete = () => {
     }
   };
 
+  const handleDownload = () => {
+    console.log('Selected records:', selectedRecords);
+    selectedRecords.forEach((record) => {
+      console.log('Processing record:', record);
+      if (!record) return;
+
+      const { id, name, address, amountnumeric, amountwords, mobileno, notes, date } = record;
+      const receiptId = `${id}A`; // Use the record ID for the receipt
+
+      const pdf = new jsPDF();
+
+      pdf.setLineWidth(1);
+      pdf.rect(10, 10, 190, 277); // Rect(x, y, width, height)
+
+      pdf.setFontSize(22);
+      pdf.setFont('Times', 'Bold');
+      pdf.text('Shree Haribandh Dham Trust Samiti (Reg.)', pdf.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
+
+      pdf.setFontSize(14);
+      pdf.setFont('Times', 'Normal');
+      pdf.text('Gram-Maulanpur, Post-Gawan, Distt. Sambhal (U.P.)', pdf.internal.pageSize.getWidth() / 2, 40, { align: 'center' });
+
+      pdf.setFontSize(12);
+      pdf.text(`Date: ${new Date(date).toLocaleDateString()}`, pdf.internal.pageSize.getWidth() / 2, 60, { align: 'center' });
+      pdf.text(`Receipt ID: ${receiptId}`, pdf.internal.pageSize.getWidth() / 8, 70, { align: 'left' });
+
+      pdf.setFontSize(16);
+      pdf.setFont('Times', 'Bold');
+      pdf.text('Raseed Details', 20, 80);
+
+      pdf.setFontSize(14);
+      pdf.setFont('Times', 'Normal');
+
+      const fieldX = 20;
+      const fieldWidth = 170;
+      const fieldHeight = 10;
+
+      pdf.setLineWidth(0.5);
+
+      pdf.text('Shri/Smt:', fieldX, 90);
+      pdf.rect(fieldX, 92, fieldWidth, fieldHeight);
+      pdf.text(String(name), fieldX + 2, 100);
+
+      pdf.text('Niwasi:', fieldX, 110);
+      pdf.rect(fieldX, 112, fieldWidth, fieldHeight);
+      pdf.text(String(address), fieldX + 2, 120);
+
+      pdf.text('Rashi (Ankan):', fieldX, 130);
+      pdf.rect(fieldX, 132, fieldWidth, fieldHeight);
+      pdf.text(String(amountnumeric), fieldX + 2, 140);
+
+      pdf.text('Rashi (Shabdo Me):', fieldX, 150);
+      pdf.rect(fieldX, 152, fieldWidth, fieldHeight);
+      pdf.text(String(amountwords), fieldX + 2, 160);
+
+      pdf.text('Mobile No.:', fieldX, 170);
+      pdf.rect(fieldX, 172, fieldWidth, fieldHeight);
+      pdf.text(String(mobileno), fieldX + 2, 180);
+
+      pdf.text('Notes:', fieldX, 190);
+      pdf.rect(fieldX, 192, fieldWidth, fieldHeight);
+      pdf.text(String(notes), fieldX + 2, 200);
+
+
+      pdf.setFontSize(12);
+      pdf.setFont('Times', 'Normal');
+      pdf.text('Signature:', 20, 250);
+
+      pdf.setFontSize(10);
+      pdf.setTextColor(100);
+      pdf.text('Thank you for your contribution!', pdf.internal.pageSize.getWidth() / 2, 270, { align: 'center' });
+
+      pdf.save(`receipt_${receiptId}.pdf`);
+    });
+  };
+
   return (
     <Container maxWidth="md">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
@@ -167,7 +244,7 @@ const AmarNidhiDelete = () => {
               </>
             )}
 
-{filterType === 'month' && (
+            {filterType === 'month' && (
               <>
                 <Grid item xs={12} sm={3}>
                   <TextField
@@ -244,11 +321,14 @@ const AmarNidhiDelete = () => {
             <TableHead>
               <TableRow>
                 <TableCell>चुने</TableCell>
-                <TableCell>नाम</TableCell>
-                <TableCell>पता</TableCell>
-                <TableCell>राशि (संख्यात्मक)</TableCell>
-                <TableCell>राशि (शब्दों में)</TableCell>
-                <TableCell>दिनांक</TableCell>
+                  <TableCell>आई.डी.</TableCell>
+                  <TableCell>नाम</TableCell>
+                  <TableCell>पता</TableCell>
+                  <TableCell>राशि (संख्यात्मक)</TableCell>
+                  <TableCell>राशि (शब्दों में)</TableCell>
+                  <TableCell>फोन नं.</TableCell>
+                  <TableCell>टिप्पणियाँ</TableCell>
+                  <TableCell>दिनांक</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -260,11 +340,14 @@ const AmarNidhiDelete = () => {
                       onChange={() => handleSelectRecord(record)}
                     />
                   </TableCell>
-                  <TableCell>{record.name}</TableCell>
-                  <TableCell>{record.address}</TableCell>
-                  <TableCell>{record.amountnumeric}</TableCell>
-                  <TableCell>{record.amountwords}</TableCell>
-                  <TableCell>{new Date(record.date).toLocaleDateString()}</TableCell>
+                    <TableCell>{record.id}</TableCell>
+                    <TableCell>{record.name}</TableCell>
+                    <TableCell>{record.address}</TableCell>
+                    <TableCell>{record.amountnumeric}</TableCell>
+                    <TableCell>{record.amountwords}</TableCell>
+                    <TableCell>{record.mobileno}</TableCell>
+                    <TableCell>{record.notes}</TableCell>
+                    <TableCell>{new Date(record.date).toLocaleDateString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -274,6 +357,15 @@ const AmarNidhiDelete = () => {
         <Box display="flex" justifyContent="center" mt={2}>
           <Button variant="contained" color="secondary" onClick={handleDelete} disabled={selectedRecords.length === 0}>
             चयनित को हटाओ
+          </Button>
+          <Button
+                variant="contained"
+                color="primary"
+                onClick={handleDownload}
+                disabled={selectedRecords.length === 0}
+                style={{ marginLeft: '10px' }}
+              >
+                चयनित को डाउनलोड करें
           </Button>
         </Box>
         <Box display="flex" justifyContent="center" mt={2}>

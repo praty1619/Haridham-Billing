@@ -4,6 +4,7 @@ import {
   TableHead, TableRow, TextField, MenuItem, Button, Box, Select, FormControl,
   InputLabel , Checkbox
 } from '@mui/material';
+import jsPDF from 'jspdf';
 
 const ExpenseRecords = () => {
   const [records, setRecords] = useState([]);
@@ -107,6 +108,89 @@ const ExpenseRecords = () => {
     }
   };
 
+  const downloadReceipt = () => {
+    selectedRecords
+      .map((recordId) => records.find((record) => record.id === recordId))
+      .forEach((record) => {
+        if (!record) return;
+  
+        const { name, address, category, amountnumeric, amountwords, mobileno, date, notes, tips, id } = record;
+        const receiptId = `${id}E`;
+        const pdf = new jsPDF();
+  
+        pdf.setLineWidth(1);
+        pdf.rect(10, 10, 190, 277);
+  
+        pdf.setFontSize(22);
+        pdf.setFont('Times', 'Bold');
+        pdf.text('Shree Haribandh Dham Trust Samiti (Reg.)', pdf.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
+  
+        pdf.setFontSize(14);
+        pdf.setFont('Times', 'Normal');
+        pdf.text('Gram-Maulanpur, Post-Gawan, Distt. Sambhal (U.P.)', pdf.internal.pageSize.getWidth() / 2, 40, { align: 'center' });
+  
+        pdf.setFontSize(12);
+        pdf.text(`Date: ${new Date(date).toLocaleDateString()}`, pdf.internal.pageSize.getWidth() / 2, 60, { align: 'center' });
+        pdf.text(`Receipt ID: ${receiptId}`, pdf.internal.pageSize.getWidth() / 8, 70, { align: 'left' });
+  
+        pdf.setFontSize(16);
+        pdf.setFont('Times', 'Bold');
+        pdf.text('Expense Details', 20, 80);
+  
+        pdf.setFontSize(14);
+        pdf.setFont('Times', 'Normal');
+  
+        const fieldX = 20;
+        const fieldWidth = 170;
+        const fieldHeight = 10;
+  
+        pdf.setLineWidth(0.5);
+  
+        pdf.text('Shri/Smt:', fieldX, 90);
+        pdf.rect(fieldX, 92, fieldWidth, fieldHeight);
+        pdf.text(String(name), fieldX + 2, 100);
+  
+        pdf.text('Niwasi:', fieldX, 110);
+        pdf.rect(fieldX, 112, fieldWidth, fieldHeight);
+        pdf.text(String(address), fieldX + 2, 120);
+  
+        pdf.text('MadNaam:', fieldX, 130);
+        pdf.rect(fieldX, 132, fieldWidth, fieldHeight);
+        pdf.text(String(category), fieldX + 2, 140);
+  
+        pdf.text('Rashi (Ankan):', fieldX, 150);
+        pdf.rect(fieldX, 152, fieldWidth, fieldHeight);
+        pdf.text(String(amountnumeric), fieldX + 2, 160);
+  
+        pdf.text('Rashi (Shabdo Me):', fieldX, 170);
+        pdf.rect(fieldX, 172, fieldWidth, fieldHeight);
+        pdf.text(String(amountwords), fieldX + 2, 180);
+  
+        pdf.text('Mobile No.:', fieldX, 190);
+        pdf.rect(fieldX, 192, fieldWidth, fieldHeight);
+        pdf.text(String(mobileno), fieldX + 2, 200);
+  
+        pdf.text('Notes:', fieldX, 210);
+        pdf.rect(fieldX, 212, fieldWidth, fieldHeight);
+        pdf.text(String(notes), fieldX + 2, 220);
+  
+        pdf.text('Tips:', fieldX, 230);
+        pdf.rect(fieldX, 232, fieldWidth, fieldHeight);
+        pdf.text(String(tips), fieldX + 2, 240);
+  
+        pdf.setFontSize(12);
+        pdf.setFont('Times', 'Normal');
+        pdf.text('Signature:', 20, 260);
+  
+        pdf.setFontSize(10);
+        pdf.setTextColor(100);
+        pdf.text('Thank you for your contribution!', pdf.internal.pageSize.getWidth() / 2, 280, { align: 'center' });
+  
+        pdf.save(`expense_receipt_${receiptId}.pdf`);
+      });
+  };
+  
+
   return (
     <Container maxWidth="md">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
@@ -150,7 +234,6 @@ const ExpenseRecords = () => {
               <MenuItem value="Gaushala Bhusa aur Chara">गौशाला भूसा और चारा</MenuItem>
               <MenuItem value="Sankirtan Anya">संकीर्तन अन्य</MenuItem>
               <MenuItem value="Sankirtan Gass">संकीर्तन गैस</MenuItem>
-              <MenuItem value="B.R Singh Ji Khata">बी.आर सिंह जि खाता</MenuItem>
               <MenuItem value="Land and Building Bhandara">लैंड एंड बिल्डिंग भंडारा</MenuItem>
               <MenuItem value="Sankirtan Labour Khata">संकीर्तन लेबर खता</MenuItem>
               <MenuItem value="Diesel Khata">डीजल खाता</MenuItem>
@@ -166,8 +249,6 @@ const ExpenseRecords = () => {
               <MenuItem value="Gaushala Dawai and Others">गौशाला दवाई एवं अन्य</MenuItem>
               <MenuItem value="Gaushala Khal">गौशाला खाल</MenuItem>
               <MenuItem value="Sankirtan Khata Doodh">संकीर्तन खता दूध</MenuItem>
-              <MenuItem value="Atul Sharma Khata">अतुल शर्मा खाता</MenuItem>
-              <MenuItem value="Ramesh Bhagatji Khata">रमेश भगतजी खता</MenuItem>
               <MenuItem value="Gaushala Building Ped">गौशाला बिल्डिंग पेड़</MenuItem>
             </TextField>
           )}
@@ -235,11 +316,13 @@ const ExpenseRecords = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell>चुने</TableCell>
+                    <TableCell>आई.डी.</TableCell>
                     <TableCell>नाम</TableCell>
                     <TableCell>पता</TableCell>
                     <TableCell>मदनाम चुने</TableCell>
                     <TableCell>राशि (संख्यात्मक)</TableCell>
                     <TableCell>राशि (शब्दों में)</TableCell>
+                    <TableCell>फोन नं</TableCell>
                     <TableCell>दिनांक</TableCell>
                     <TableCell>टिप्पणियाँ</TableCell>
                     <TableCell>सुझाव</TableCell>
@@ -254,11 +337,13 @@ const ExpenseRecords = () => {
                           onChange={() => handleSelectRecord(record.id)}
                         />
                       </TableCell>
+                      <TableCell>{record.id}</TableCell>
                       <TableCell>{record.name}</TableCell>
                       <TableCell>{record.address}</TableCell>
                       <TableCell>{record.category}</TableCell>
                       <TableCell>{record.amountnumeric}</TableCell>
                       <TableCell>{record.amountwords}</TableCell>
+                      <TableCell>{record.mobileno}</TableCell>
                       <TableCell>{new Date(record.date).toLocaleDateString()}</TableCell>
                       <TableCell>{record.notes}</TableCell>
                       <TableCell>{record.tips}</TableCell>
@@ -276,6 +361,15 @@ const ExpenseRecords = () => {
               >
                 व्यय रिकॉर्ड हटाएं
               </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={downloadReceipt}
+                disabled={selectedRecords.length === 0}
+                style={{ marginLeft: '10px' }}
+              >
+                चयनित को डाउनलोड करें
+          </Button>
             </Box>
             <Box display="flex" justifyContent="center" mt={2}>
               <Button variant="contained" color="primary" onClick={handleShowMore} disabled={loading}>

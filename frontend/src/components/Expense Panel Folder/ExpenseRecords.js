@@ -155,7 +155,6 @@ const ExpenseRecords = () => {
               <MenuItem value="Gaushala Bhusa aur Chara">गौशाला भूसा और चारा</MenuItem>
               <MenuItem value="Sankirtan Anya">संकीर्तन अन्य</MenuItem>
               <MenuItem value="Sankirtan Gass">संकीर्तन गैस</MenuItem>
-              <MenuItem value="B.R Singh Ji Khata">बी.आर सिंह जि खाता</MenuItem>
               <MenuItem value="Land and Building Bhandara">लैंड एंड बिल्डिंग भंडारा</MenuItem>
               <MenuItem value="Sankirtan Labour Khata">संकीर्तन लेबर खता</MenuItem>
               <MenuItem value="Diesel Khata">डीजल खाता</MenuItem>
@@ -171,8 +170,6 @@ const ExpenseRecords = () => {
               <MenuItem value="Gaushala Dawai and Others">गौशाला दवाई एवं अन्य</MenuItem>
               <MenuItem value="Gaushala Khal">गौशाला खाल</MenuItem>
               <MenuItem value="Sankirtan Khata Doodh">संकीर्तन खता दूध</MenuItem>
-              <MenuItem value="Atul Sharma Khata">अतुल शर्मा खाता</MenuItem>
-              <MenuItem value="Ramesh Bhagatji Khata">रमेश भगतजी खता</MenuItem>
               <MenuItem value="Gaushala Building Ped">गौशाला बिल्डिंग पेड़</MenuItem>
             </TextField>
           )}
@@ -239,11 +236,13 @@ const ExpenseRecords = () => {
               <Table>
                 <TableHead>
                   <TableRow>
+                    <TableCell>आई.डी.</TableCell>
                     <TableCell>नाम</TableCell>
                     <TableCell>पता</TableCell>
                     <TableCell>मदनाम चुने</TableCell>
                     <TableCell>राशि (संख्यात्मक)</TableCell>
                     <TableCell>राशि (शब्दों में)</TableCell>
+                    <TableCell>फोन नं</TableCell>
                     <TableCell>दिनांक</TableCell>
                     <TableCell>टिप्पणियाँ</TableCell>
                     <TableCell>सुझाव</TableCell>
@@ -251,12 +250,14 @@ const ExpenseRecords = () => {
                 </TableHead>
                 <TableBody>
                 {displayedRecords.map((record) => (
-                    <TableRow key={record.id}>
+                      <TableRow key={record.id}>
+                      <TableCell>{record.id}</TableCell>
                       <TableCell>{record.name}</TableCell>
                       <TableCell>{record.address}</TableCell>
                       <TableCell>{record.category}</TableCell>
                       <TableCell>{record.amountnumeric}</TableCell>
                       <TableCell>{record.amountwords}</TableCell>
+                      <TableCell>{record.mobileno}</TableCell>
                       <TableCell>{new Date(record.date).toLocaleDateString()}</TableCell>
                       <TableCell>{record.notes}</TableCell>
                       <TableCell>{record.tips}</TableCell>

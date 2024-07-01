@@ -145,22 +145,28 @@ const BikriKabadSankirtan = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>नाम</TableCell>
-                  <TableCell>पता</TableCell>
-                  <TableCell>बाबत्त</TableCell>
-                  <TableCell>राशि (संख्यात्मक)</TableCell>
-                  <TableCell>राशि (शब्दों में)</TableCell>
-                  <TableCell>दिनांक</TableCell>
+                    <TableCell>आई.डी.</TableCell>
+                    <TableCell>नाम</TableCell>
+                    <TableCell>पता</TableCell>
+                    <TableCell>बाबत्त</TableCell>
+                    <TableCell>राशि (संख्यात्मक)</TableCell>
+                    <TableCell>राशि (शब्दों में)</TableCell>
+                    <TableCell>फोन नं.</TableCell>
+                    <TableCell>टिप्पणियाँ</TableCell>
+                    <TableCell>दिनांक</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {records.map((record) => (
                   <TableRow key={record.id}>
+                    <TableCell>{record.id}</TableCell>
                     <TableCell>{record.name}</TableCell>
                     <TableCell>{record.address}</TableCell>
                     <TableCell>{record.category}</TableCell>
                     <TableCell>{record.amountnumeric}</TableCell>
                     <TableCell>{record.amountwords}</TableCell>
+                    <TableCell>{record.mobileno}</TableCell>
+                    <TableCell>{record.notes}</TableCell>
                     <TableCell>{new Date(record.date).toLocaleDateString()}</TableCell>
                   </TableRow>
                 ))}

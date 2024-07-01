@@ -16,12 +16,10 @@ import LandAndBuildingKhata from './Income Panel Folder/LandAndBuildingKhata';
 import FormRecords from './Income Panel Folder/FormRecords';
 import ExpenseRaseed from './Expense Panel Folder/ExpenseRaseed';
 import ExpenseRecords from './Expense Panel Folder/ExpenseRecords';
-import DeleteRecords from './Income Panel Folder/DeleteRecords'; // Import DeleteRecords component
-import AmarNidhiDelete from './Income Panel Folder/AmarNidhiDelete'; // Import DeleteRecords component
-import ExpenseDelete from './Expense Panel Folder/ExpenseDelete';   // Import DeleteRecords component
+import DeleteRecords from './Income Panel Folder/DeleteRecords';
+import AmarNidhiDelete from './Income Panel Folder/AmarNidhiDelete'; 
+import ExpenseDelete from './Expense Panel Folder/ExpenseDelete';   
 import MachineryMarammatSir from './Expense Panel Folder/MachineryMarammatSir';
-import AtulSharmaKhata from './Expense Panel Folder/AtulSharmaKhata';
-import BRSinghjiKhata from './Expense Panel Folder/BRSinghjiKhata';
 import BuildingMarammatKhata from './Expense Panel Folder/BuildingMarammatKhata';
 import DieselKhata from './Expense Panel Folder/DieselKhata';
 import GaushalaBhusaAurChara from './Expense Panel Folder/GaushalaBhusaAurChara';
@@ -34,7 +32,6 @@ import LabourSir from './Expense Panel Folder/LabourSir';
 import LandAndBuildingBhandara from './Expense Panel Folder/LandAndBuildingBhandara';
 import LightGeneratorMarammatKhata from './Expense Panel Folder/LightGeneratorMarammatKhata';
 import ParkMaintenanceKhata from './Expense Panel Folder/ParkMaintenanceKhata';
-import RameshBhagatjiKhata from './Expense Panel Folder/RameshBhagatjiKhata';
 import SankirtanAnya from './Expense Panel Folder/SankirtanAnya';
 import SankirtanGass from './Expense Panel Folder/SankirtanGass';
 import SankirtanGehuLabour from './Expense Panel Folder/SankirtanGehuLabour';
@@ -46,6 +43,11 @@ import SankirtanSabji from './Expense Panel Folder/SankirtanSabji';
 import SirLabourMandeya from './Expense Panel Folder/SirLabourMandeya';
 import VidyalayaOthersKharcha from './Expense Panel Folder/VidyalayaOthersKharcha';
 import VidyaPeethMandeya from './Expense Panel Folder/VidyaPeethMandeya';
+import RaseedBalanceSheet from './Balance Sheet Folder/RaseedBalanceSheet';
+import AmarnidhiBalanceSheet from './Balance Sheet Folder/AmarnidhiBalanceSheet';
+import ExpenseBalanceSheet from './Balance Sheet Folder/ExpenseBalanceSheet';
+import UdhaarRaseed from './Udhar Panel Folder/UdhaarRaseed';
+import UdhaarRecords from './Udhar Panel Folder/UdhaarRecords';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -55,6 +57,8 @@ const AdminDashboard = () => {
   const [amarNidhiAnchorEl, setAmarNidhiAnchorEl] = useState(null);
   const [raseedAnchorEl, setRaseedAnchorEl] = useState(null);
   const [expenseAnchorEl, setExpenseAnchorEl] = useState(null);
+  const [balanceAnchorEl, setBalanceAnchorEl] = useState(null);
+  const [udhaarAnchorE1 , setUdhaarAnchorE1] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -111,6 +115,24 @@ const AdminDashboard = () => {
     if (panel) setActivePanel(panel);
   };
 
+  const handleBalanceClick = (event) => {
+    setBalanceAnchorEl(event.currentTarget);
+  };
+
+  const handleBalanceClose = (panel) => {
+    setBalanceAnchorEl(null);
+    if (panel) setActivePanel(panel);
+  };
+
+  const handleUdhaarClick = (event) => {
+    setUdhaarAnchorE1(event.currentTarget);
+  };
+
+  const handleUdhaarClose = (panel) => {
+    setUdhaarAnchorE1(null);
+    if (panel) setActivePanel(panel);
+  };
+
   const getCurrentDate = () => {
     const today = new Date();
     const dd = String(today.getDate()).padStart(2, '0');
@@ -149,67 +171,71 @@ const AdminDashboard = () => {
         return <ExpenseRaseed />;
       case 'expenseRecords':
         return <ExpenseRecords />;
-      case 'deleteRecords': // Add case for DeleteRecords
+      case 'deleteRecords': 
         return <DeleteRecords />;
-      case 'amarNidhiDelete': // Add case for DeleteRecords
+      case 'amarNidhiDelete': 
         return <AmarNidhiDelete />;
-      case 'expenseDelete': // Add case for DeleteRecords
+      case 'expenseDelete': 
         return <ExpenseDelete />;
       case 'machineryMarammatSir': 
-        return <MachineryMarammatSir />;
-      case 'atulSharmaKhata': 
-        return <AtulSharmaKhata />;
-      case 'brSinghJiKhata': 
-        return <BRSinghjiKhata />;       
+        return <MachineryMarammatSir />;     
       case 'buildingMarammatKhata': 
         return <BuildingMarammatKhata />;
       case 'dieselKhata': 
         return <DieselKhata />;
-      case 'gaushalaBhusaAurChara': // Add case for DeleteRecords
+      case 'gaushalaBhusaAurChara': 
         return <GaushalaBhusaAurChara />;
-      case 'gaushalaBuildingPed': // Add case for DeleteRecords
+      case 'gaushalaBuildingPed': 
         return <GaushalaBuildingPed />;
-      case 'gaushalaDawaiAndOthers': // Add case for DeleteRecords
+      case 'gaushalaDawaiAndOthers': 
         return <GaushalaDawaiAndOthers />;
-      case 'gaushalaLabourMandeya': // Add case for DeleteRecords
+      case 'gaushalaLabourMandeya': 
         return <GaushalaLabourMandeya />;
-      case 'gaushalaKhal': // Add case for DeleteRecords
+      case 'gaushalaKhal': 
         return <GaushalaKhal />;
-      case 'khadBeejSir': // Add case for DeleteRecords
+      case 'khadBeejSir': 
         return <KhadBeejSir />;
-      case 'labourSir': // Add case for DeleteRecords
+      case 'labourSir': 
         return <LabourSir />;
-      case 'landAndBuildingBhandara': // Add case for DeleteRecords
+      case 'landAndBuildingBhandara': 
         return <LandAndBuildingBhandara />;
-      case 'lightGeneratorMarammatKhata': // Add case for DeleteRecords
+      case 'lightGeneratorMarammatKhata': 
         return <LightGeneratorMarammatKhata />;
-      case 'parkMaintenanceKhata': // Add case for DeleteRecords
+      case 'parkMaintenanceKhata': 
         return <ParkMaintenanceKhata />;
-      case 'rameshBhagatjiKhata': // Add case for DeleteRecords
-        return <RameshBhagatjiKhata />;
-      case 'sankirtanAnya': // Add case for DeleteRecords
+      case 'sankirtanAnya': 
         return <SankirtanAnya />;
-      case 'sanirtanGass': // Add case for DeleteRecords
+      case 'sankirtanGass': 
         return <SankirtanGass />;
-      case 'sankirtanGehuLabour': // Add case for DeleteRecords
+      case 'sankirtanGehuLabour': 
         return <SankirtanGehuLabour />;
-      case 'sankirtanKhataDoodh': // Add case for DeleteRecords
+      case 'sankirtanKhataDoodh': 
         return <SankirtanKhataDoodh />;
-      case 'sankirtanKhataMandeya': // Add case for DeleteRecords
+      case 'sankirtanKhataMandeya': 
         return <SankirtanKhataMandeya />;
-      case 'sankirtanLabourKhata': // Add case for DeleteRecords
+      case 'sankirtanLabourKhata': 
         return <SankirtanLabourKhata />;
-      case 'sankirtanRashanKhata': // Add case for DeleteRecords
+      case 'sankirtanRashanKhata': 
         return <SankirtanRashanKhata />;
-      case 'sankirtanSabji': // Add case for DeleteRecords
+      case 'sankirtanSabji': 
         return <SankirtanSabji />;
-      case 'sirLabourMandeya': // Add case for DeleteRecords
+      case 'sirLabourMandeya': 
         return <SirLabourMandeya />;
-      case 'vidyalayaOthersKharcha': // Add case for DeleteRecords
+      case 'vidyalayaOthersKharcha': 
         return <VidyalayaOthersKharcha />;
-      case 'vidyaPeethMandeya': // Add case for DeleteRecords
+      case 'vidyaPeethMandeya': 
         return <VidyaPeethMandeya />;
-      default:
+      case 'raseedBalanceSheet':
+        return <RaseedBalanceSheet/>;
+      case 'amarnidhiBalanceSheet':
+        return <AmarnidhiBalanceSheet/>;      
+      case 'expenseBalanceSheet':
+        return <ExpenseBalanceSheet/>;
+      case 'udhaarRaseed':
+        return <UdhaarRaseed/>;
+      case 'udhaarRecords':
+        return <UdhaarRecords/>;         
+        default:
         return <div>Welcome to Shree Haridham Bandh Trust Samitee</div>;
     }
   };
@@ -283,8 +309,6 @@ const AdminDashboard = () => {
               >
                 <MenuItem onClick={() => handleExpenseClose('expenseRaseed')}>व्यय रसीद</MenuItem>
                 <MenuItem onClick={() => handleExpenseClose('expenseRecords')}>व्यय खाता</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('atulSharmaKhata')}>अतुल शर्मा खाता</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('brSinghJiKhata')}>बी.आर सिंह जि खाता</MenuItem>
                 <MenuItem onClick={() => handleExpenseClose('buildingMarammatKhata')}>बिल्डिंग मरम्मत खाता</MenuItem>
                 <MenuItem onClick={() => handleExpenseClose('dieselKhata')}>डीजल खाता</MenuItem>
                 <MenuItem onClick={() => handleExpenseClose('gaushalaBhusaAurChara')}>गौशाला भूसा और चारा</MenuItem>
@@ -295,16 +319,15 @@ const AdminDashboard = () => {
                 <MenuItem onClick={() => handleExpenseClose('khadBeejSir')}>खाद बीज सीर</MenuItem>
                 <MenuItem onClick={() => handleExpenseClose('labourSir')}>लेबर सीर</MenuItem>
                 <MenuItem onClick={() => handleExpenseClose('landAndBuildingBhandara')}>लैंड एंड बिल्डिंग भंडारा</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('lightGeneratorMarammatKhata')}>लाइट जनरेटर मरम्मत खता</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('lightGeneratorMarammatKhata')}>लाइट जनरेटर मरम्मत खाता</MenuItem>
                 <MenuItem onClick={() => handleExpenseClose('machineryMarammatSir')}>मशीनरी मरम्मत सीर</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('parkMaintenanceKhata')}>पार्क मेंटेनेंस खता</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('rameshBhagatjiKhata')}>रमेश भगतजी खता</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('parkMaintenanceKhata')}>पार्क मेंटेनेंस खाता</MenuItem>
                 <MenuItem onClick={() => handleExpenseClose('sankirtanAnya')}>संकीर्तन अन्य</MenuItem>
                 <MenuItem onClick={() => handleExpenseClose('sankirtanGass')}>संकीर्तन गैस</MenuItem>
                 <MenuItem onClick={() => handleExpenseClose('sankirtanGehuLabour')}>संकीर्तन गेहू लेबर</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('sankirtanKhataMandeya')}>संकीर्तन खता मानदेय</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('sankirtanLabourKhata')}>संकीर्तन लेबर खता</MenuItem>
-                <MenuItem onClick={() => handleExpenseClose('sankirtanRashanKhata')}>संकीर्तन राशन खता</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('sankirtanKhataMandeya')}>संकीर्तन खाता मानदेय</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('sankirtanLabourKhata')}>संकीर्तन लेबर खाता</MenuItem>
+                <MenuItem onClick={() => handleExpenseClose('sankirtanRashanKhata')}>संकीर्तन राशन खाता</MenuItem>
                 <MenuItem onClick={() => handleExpenseClose('sankirtanSabji')}>संकीर्तन सब्जी</MenuItem>
                 <MenuItem onClick={() => handleExpenseClose('sirLabourMandeya')}>सीर लेबर मानदेय</MenuItem>
                 <MenuItem onClick={() => handleExpenseClose('vidyalayaOthersKharcha')}>विद्यालय अन्य खर्चा</MenuItem>
@@ -313,10 +336,39 @@ const AdminDashboard = () => {
               </Menu>
             </li>
             <li>
+            <Button fullWidth variant="outlined" onClick={handleBalanceClick}>
+                बैलेंस शीट पैनल
+              </Button>
+              <Menu
+                anchorEl={balanceAnchorEl}
+                keepMounted
+                open={Boolean(balanceAnchorEl)}
+                onClose={() => setBalanceAnchorEl(null)}
+              >
+                <MenuItem onClick={() => handleBalanceClose('raseedBalanceSheet')}>रसीद बैलेंस शीट</MenuItem>
+                <MenuItem onClick={() => handleBalanceClose('amarnidhiBalanceSheet')}>अमरनिधि बैलेंस शीट</MenuItem>
+                <MenuItem onClick={() => handleBalanceClose('expenseBalanceSheet')}>व्यय बैलेंस शीट</MenuItem>
+              </Menu>  
+            </li>
+            <li>
+            <Button fullWidth variant="outlined" onClick={handleUdhaarClick}>
+                उधार पैनल
+              </Button>
+              <Menu
+                anchorEl={udhaarAnchorE1}
+                keepMounted
+                open={Boolean(udhaarAnchorE1)}
+                onClose={() => setUdhaarAnchorE1(null)}
+              >
+                <MenuItem onClick={() => handleUdhaarClose('udhaarRaseed')}>उधार रसीद</MenuItem>
+                <MenuItem onClick={() => handleUdhaarClose('udhaarRecords')}>उधार खाता</MenuItem>
+              </Menu>  
+            </li>
+            <li>
               <Button fullWidth variant="outlined" onClick={handleLogout}>
               लॉग आउट
               </Button>
-             </li>
+            </li>
           </ul>
         </div>
         <div className="main-content">

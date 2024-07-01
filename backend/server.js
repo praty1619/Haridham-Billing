@@ -43,19 +43,21 @@ pool.connect(async (err) => {
 
 const createTables = async () => {
   const createFormsTable = `
-    CREATE TABLE IF NOT EXISTS forms (
+    CREATE TABLE IF NOT EXISTS raseed (
       id SERIAL PRIMARY KEY,
       name VARCHAR(255),
       address VARCHAR(255),
       category VARCHAR(255),
       amountNumeric DOUBLE PRECISION,
       amountWords VARCHAR(255),
+      mobileno VARCHAR(20),
+      notes TEXT,
       date DATE
     );
   `;
 
   const createUsersTable = `
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS users(
       id SERIAL PRIMARY KEY,
       username VARCHAR(255) NOT NULL UNIQUE,
       password VARCHAR(255) NOT NULL UNIQUE
@@ -63,7 +65,7 @@ const createTables = async () => {
   `;
 
   const createFixedDepositsTable = `
-    CREATE TABLE IF NOT EXISTS fixed_deposits (
+    CREATE TABLE IF NOT EXISTS fixed_deposit (
       id SERIAL PRIMARY KEY,
       bankName VARCHAR(255) NOT NULL,
       accountNumber VARCHAR(255) NOT NULL,
@@ -74,26 +76,42 @@ const createTables = async () => {
   `;
 
   const createAmarNidhiTable = `
-    CREATE TABLE IF NOT EXISTS amar_nidhi (
+    CREATE TABLE IF NOT EXISTS amar_nidhis (
       id SERIAL PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
       address VARCHAR(255) NOT NULL,
       amountNumeric DECIMAL(10, 2) NOT NULL DEFAULT 1100,
       amountWords VARCHAR(255) NOT NULL DEFAULT 'One Thousand One Hundred Only',
+      mobileno VARCHAR(20),
+      notes TEXT,
       date DATE
     );
   `;
 
   const createExpenseFormsTable = `
-    CREATE TABLE IF NOT EXISTS expense_forms (
+    CREATE TABLE IF NOT EXISTS expense_form (
       id SERIAL PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
       address VARCHAR(255) NOT NULL,
       category VARCHAR(255) NOT NULL,
       amountNumeric DECIMAL(10, 2) NOT NULL,
       amountWords VARCHAR(255) NOT NULL,
+      mobileno VARCHAR(20),
       notes TEXT,
       tips TEXT,
+      date DATE NOT NULL
+    );
+  `;
+
+  const createUdhaarTable = `
+   CREATE TABLE IF NOT EXISTS udhaar (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      address VARCHAR(255) NOT NULL,
+      amountNumeric DECIMAL(10, 2) NOT NULL,
+      amountWords VARCHAR(255) NOT NULL,
+      mobileno VARCHAR(20),
+      notes TEXT,
       date DATE NOT NULL
     );
   `;
@@ -104,6 +122,7 @@ const createTables = async () => {
     await pool.query(createFixedDepositsTable);
     await pool.query(createAmarNidhiTable);
     await pool.query(createExpenseFormsTable);
+    await pool.query(createUdhaarTable);
     console.log('Tables created successfully');
   } catch (err) {
     console.error('Error creating tables', err);
@@ -199,7 +218,7 @@ app.get('/api/admin-dashboard', verifyToken, (req, res) => {
 // Endpoint to fetch the latest ID
 app.get('/api/expense/latestId', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT MAX(id) as latestId FROM expense_forms'); // replace `forms` with your actual table name
+    const { rows } = await pool.query('SELECT MAX(id) as latestId FROM expense_form'); // replace `forms` with your actual table name
     const latestId = rows[0].latestid || 0; // Get the latest ID or default to 0 if none found
     res.json({ latestId });
   } catch (err) {
@@ -209,9 +228,9 @@ app.get('/api/expense/latestId', async (req, res) => {
 });
 
 app.post('/submit-expense', (req, res) => {
-  const { name, address, category, amountNumeric, amountWords, date, notes, tips } = req.body;
-  const sql = 'INSERT INTO expense_forms (name, address, category, amountNumeric, amountWords, date, notes, tips) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)';
-  pool.query(sql, [name, address, category, amountNumeric, amountWords, date, notes, tips], (err, result) => {
+  const { name, address, category, amountNumeric, amountWords, date, notes, tips , mobileno } = req.body;
+  const sql = 'INSERT INTO expense_form (name, address, category, amountNumeric, amountWords, date, notes, tips , mobileno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8 , $9)';
+  pool.query(sql, [name, address, category, amountNumeric, amountWords, date, notes, tips, mobileno], (err, result) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -222,7 +241,7 @@ app.post('/submit-expense', (req, res) => {
 app.get('/api/expense/filter', (req, res) => {
   const { category, date, month, year, offset = 0, limit = 50 } = req.query;
 
-  let sql = 'SELECT * FROM expense_forms WHERE 1=1';
+  let sql = 'SELECT * FROM expense_form WHERE 1=1';
   const params = [];
 
   if (category) {
@@ -254,10 +273,41 @@ app.get('/api/expense/filter', (req, res) => {
   });
 });
 
+// Endpoint to fetch form records by month or year
+app.get('/api/expense/balance', async (req, res) => {
+  const { year, month } = req.query;
+
+  try {
+    let sql = 'SELECT *, TO_CHAR(date, \'YYYY-MM-DD\') AS formatted_date FROM expense_form WHERE EXTRACT(YEAR FROM date) = $1';
+    let values = [year];
+
+    if (month) {
+      sql += ' AND EXTRACT(MONTH FROM date) = $2';
+      values.push(month);
+    }
+
+    const { rows: records } = await pool.query(sql, values);
+
+    // Calculate total amount
+    let totalAmountSql = 'SELECT SUM(amountNumeric) AS totalAmount FROM expense_form WHERE EXTRACT(YEAR FROM date) = $1';
+    if (month) {
+      totalAmountSql += ' AND EXTRACT(MONTH FROM date) = $2';
+    }
+
+    const { rows: totalAmountResult } = await pool.query(totalAmountSql, values);
+    const totalAmount = totalAmountResult[0].totalamount || 0;
+
+    res.json({ records, totalAmount });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.get('/api/expense/totalAmount', async (req, res) => {
   const { category, date, month, year } = req.query;
 
-  let query = 'SELECT SUM(amountNumeric) as totalAmount FROM expense_forms WHERE 1=1'; // replace `your_table_name` with your actual table name
+  let query = 'SELECT SUM(amountNumeric) as totalAmount FROM expense_form WHERE 1=1'; // replace `your_table_name` with your actual table name
   let queryParams = [];
 
   if (category) {
@@ -293,7 +343,7 @@ app.get('/api/expense/totalAmount', async (req, res) => {
 // Endpoint to fetch the latest ID
 app.get('/api/forms/latestId', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT MAX(id) as latestId FROM forms'); // replace `forms` with your actual table name
+    const { rows } = await pool.query('SELECT MAX(id) as latestId FROM raseed'); // replace `forms` with your actual table name
     const latestId = rows[0].latestid || 0; // Get the latest ID or default to 0 if none found
     res.json({ latestId });
   } catch (err) {
@@ -303,9 +353,9 @@ app.get('/api/forms/latestId', async (req, res) => {
 });
 
 app.post('/submit-form', (req, res) => {
-  const { name, address, category, amountNumeric, amountWords, date } = req.body;
-  const sql = 'INSERT INTO forms (name, address, category, amountNumeric, amountWords, date) VALUES ($1, $2, $3, $4, $5, $6)';
-  pool.query(sql, [name, address, category, amountNumeric, amountWords, date], (err, result) => {
+  const { name, address, category, amountNumeric, amountWords, mobileno, notes, date } = req.body;
+  const sql = 'INSERT INTO raseed (name, address, category, amountNumeric, amountWords, mobileno, notes, date) VALUES ($1, $2, $3, $4, $5, $6, $7 , $8)';
+  pool.query(sql, [name, address, category, amountNumeric, amountWords, mobileno, notes, date], (err, result) => {
     if (err) {
       return res.status(500).json({ error: err.message });
   }
@@ -314,7 +364,7 @@ app.post('/submit-form', (req, res) => {
 });
 
 app.get('/api/forms', (req, res) => {
-  const sql = 'SELECT * FROM forms';
+  const sql = 'SELECT * FROM raseed';
   pool.query(sql, (err, results) => {
     if (err) {
       return res.status(500).send(err);
@@ -327,7 +377,7 @@ app.get('/api/forms', (req, res) => {
 app.get('/api/forms/filter', (req, res) => {
   const { category, date, month, year, offset = 0, limit = 50 } = req.query;
 
-  let sql = 'SELECT * FROM forms WHERE 1=1';
+  let sql = 'SELECT * FROM raseed WHERE 1=1';
   const params = [];
 
   if (category) {
@@ -362,7 +412,7 @@ app.get('/api/forms/filter', (req, res) => {
 app.get('/api/forms/totalAmount', async (req, res) => {
   const { category, date, month, year } = req.query;
 
-  let query = 'SELECT SUM(amountNumeric) as totalAmount FROM forms WHERE 1=1'; // replace `your_table_name` with your actual table name
+  let query = 'SELECT SUM(amountNumeric) as totalAmount FROM raseed WHERE 1=1'; // replace `your_table_name` with your actual table name
   let queryParams = [];
 
   if (category) {
@@ -395,10 +445,41 @@ app.get('/api/forms/totalAmount', async (req, res) => {
   }
 });
 
+app.get('/api/forms/balance', async (req, res) => {
+  const { year, month } = req.query;
+
+  try {
+    let sql = 'SELECT *, TO_CHAR(date, \'YYYY-MM-DD\') AS formatted_date FROM raseed WHERE EXTRACT(YEAR FROM date) = $1';
+    let values = [year];
+
+    if (month) {
+      sql += ' AND EXTRACT(MONTH FROM date) = $2';
+      values.push(month);
+    }
+
+    const { rows: records } = await pool.query(sql, values);
+
+    // Calculate total amount
+    let totalAmountSql = 'SELECT SUM(amountNumeric) AS totalAmount FROM raseed WHERE EXTRACT(YEAR FROM date) = $1';
+    if (month) {
+      totalAmountSql += ' AND EXTRACT(MONTH FROM date) = $2';
+    }
+
+    const { rows: totalAmountResult } = await pool.query(totalAmountSql, values);
+    const totalAmount = totalAmountResult[0].totalamount || 0;
+
+    res.json({ records, totalAmount });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 // Endpoint to fetch the latest ID
 app.get('/api/amarNidhi/latestId', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT MAX(id) as latestId FROM amar_nidhi'); // replace `forms` with your actual table name
+    const { rows } = await pool.query('SELECT MAX(id) as latestId FROM amar_nidhis'); // replace `forms` with your actual table name
     const latestId = rows[0].latestid || 0; // Get the latest ID or default to 0 if none found
     res.json({ latestId });
   } catch (err) {
@@ -409,9 +490,9 @@ app.get('/api/amarNidhi/latestId', async (req, res) => {
 
 // Endpoint to handle form submission for AmarNidhi
 app.post('/api/amarNidhi', (req, res) => {
-  const { name, address, amountNumeric, amountWords } = req.body;
-  const sql = 'INSERT INTO amar_nidhi (name, address, amountNumeric, amountWords, date) VALUES ($1, $2, $3, $4, NOW())';
-  pool.query(sql, [name, address, amountNumeric, amountWords], (err, result) => {
+  const { name, address, amountNumeric, amountWords , mobileno, notes } = req.body;
+  const sql = 'INSERT INTO amar_nidhis (name, address, amountNumeric, amountWords, mobileno, notes, date) VALUES ($1, $2, $3, $4, $5, $6, NOW())';
+  pool.query(sql, [name, address, amountNumeric, amountWords, mobileno, notes ], (err, result) => {
     if (err) {
       return res.status(500).send(err);
     }
@@ -420,7 +501,7 @@ app.post('/api/amarNidhi', (req, res) => {
 });
 
 app.get('/api/amarNidhiReceipt', (req, res) => {
-  const sql = 'SELECT SUM(amountNumeric) AS totalAmount FROM amar_nidhi WHERE date > NOW() - INTERVAL \'1 YEAR\'';
+  const sql = 'SELECT SUM(amountNumeric) AS totalAmount FROM amar_nidhis WHERE date > NOW() - INTERVAL \'1 YEAR\'';
   pool.query(sql, (err, result) => {
     if (err) {
       return res.status(500).send(err);
@@ -429,10 +510,41 @@ app.get('/api/amarNidhiReceipt', (req, res) => {
   });
 });
 
+// Endpoint to fetch form records by month or year
+app.get('/api/amarnidhi/balance', async (req, res) => {
+  const { year, month } = req.query;
+
+  try {
+    let sql = 'SELECT *, TO_CHAR(date, \'YYYY-MM-DD\') AS formatted_date FROM amar_nidhis WHERE EXTRACT(YEAR FROM date) = $1';
+    let values = [year];
+
+    if (month) {
+      sql += ' AND EXTRACT(MONTH FROM date) = $2';
+      values.push(month);
+    }
+
+    const { rows: records } = await pool.query(sql, values);
+
+    // Calculate total amount
+    let totalAmountSql = 'SELECT SUM(amountNumeric) AS totalAmount FROM amar_nidhis WHERE EXTRACT(YEAR FROM date) = $1';
+    if (month) {
+      totalAmountSql += ' AND EXTRACT(MONTH FROM date) = $2';
+    }
+
+    const { rows: totalAmountResult } = await pool.query(totalAmountSql, values);
+    const totalAmount = totalAmountResult[0].totalamount || 0;
+
+    res.json({ records, totalAmount });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Fixed Deposit routes
 app.post('/api/fixedDeposit', (req, res) => {
   const { bankName, accountNumber, fdrNumber, date, amount } = req.body;
-  const sql = 'INSERT INTO fixed_deposits (bankName, accountNumber, fdrNumber, date, depositAmount) VALUES ($1, $2, $3, $4, $5)';
+  const sql = 'INSERT INTO fixed_deposit (bankName, accountNumber, fdrNumber, date, depositAmount) VALUES ($1, $2, $3, $4, $5)';
   pool.query(sql, [bankName, accountNumber, fdrNumber, date, amount], (err, result) => {
     if (err) {
       return res.status(500).send(err);
@@ -442,7 +554,7 @@ app.post('/api/fixedDeposit', (req, res) => {
 });
 
 app.get('/api/total', (req, res) => {
-  const sql = 'SELECT SUM(depositAmount) AS totalAmount FROM fixed_deposits';
+  const sql = 'SELECT SUM(depositAmount) AS totalAmount FROM fixed_deposit';
   pool.query(sql, (err, result) => {
     if (err) {
       return res.status(500).send(err);
@@ -453,7 +565,7 @@ app.get('/api/total', (req, res) => {
 
 // Endpoint to fetch all fixed deposit records
 app.get('/api/fixedDeposits', (req, res) => {
-  const sql = 'SELECT * FROM fixed_deposits';
+  const sql = 'SELECT * FROM fixed_deposit';
   pool.query(sql, (err, results) => {
     if (err) {
       return res.status(500).send(err);
@@ -463,7 +575,7 @@ app.get('/api/fixedDeposits', (req, res) => {
 });
 
 app.get('/api/amarNidhiRecords', (req, res) => {
-  const sql = 'SELECT * FROM amar_nidhi';
+  const sql = 'SELECT * FROM amar_nidhis';
   pool.query(sql, (err, results) => {
     if (err) {
       return res.status(500).send(err);
@@ -474,7 +586,7 @@ app.get('/api/amarNidhiRecords', (req, res) => {
 
 app.get('/api/amarNidhiReceipt/custom_date', (req, res) => {
   const { fromDate, toDate, month, year } = req.query;
-  let sql = 'SELECT SUM(amountNumeric) AS totalAmount FROM amar_nidhi WHERE 1=1';
+  let sql = 'SELECT SUM(amountNumeric) AS totalAmount FROM amar_nidhis WHERE 1=1';
   const params = [];
 
   if (fromDate) {
@@ -505,7 +617,7 @@ app.get('/api/amarNidhiReceipt/custom_date', (req, res) => {
 
 app.get('/api/amarNidhiRecords/custom_date', (req, res) => {
   const { fromDate, toDate, month, year, limit = 50, offset = 0 } = req.query;
-  let sql = 'SELECT * FROM amar_nidhi WHERE 1=1';
+  let sql = 'SELECT * FROM amar_nidhis WHERE 1=1';
   const params = [];
 
   if (fromDate) {
@@ -541,7 +653,7 @@ app.get('/api/amarNidhiRecords/custom_date', (req, res) => {
 // Add delete endpoint for forms
 app.delete('/api/forms/:id', (req, res) => {
   const { id } = req.params;
-  const sql = 'DELETE FROM forms WHERE id = $1';
+  const sql = 'DELETE FROM raseed WHERE id = $1';
   pool.query(sql, [id], (err, result) => {
     if (err) {
       return res.status(500).json({ error: err.message });
@@ -553,7 +665,7 @@ app.delete('/api/forms/:id', (req, res) => {
 // Endpoint to delete amar_nidhi records
 app.delete('/api/amarNidhi/:id', (req, res) => {
   const { id } = req.params;
-  const sql = 'DELETE FROM amar_nidhi WHERE id = $1';
+  const sql = 'DELETE FROM amar_nidhis WHERE id = $1';
   pool.query(sql, [id], (err, result) => {
     if (err) {
       return res.status(500).json({ error: err.message });
@@ -565,12 +677,54 @@ app.delete('/api/amarNidhi/:id', (req, res) => {
 // Endpoint to delete expense_forms records
 app.delete('/api/submit-form/:id', (req, res) => {
   const { id } = req.params;
-  const sql = 'DELETE FROM expense_forms WHERE id = $1';
+  const sql = 'DELETE FROM expense_form WHERE id = $1';
   pool.query(sql, [id], (err, result) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
     res.status(200).json({ message: 'Record deleted successfully' });
+  });
+});
+
+app.post('/submit-udhaar', (req, res) => {
+  const { name, address, amountNumeric, amountWords, date, notes, mobileno } = req.body;
+  const sql = 'INSERT INTO udhaar (name, address, amountNumeric, amountWords, date, notes, mobileno) VALUES ($1, $2, $3, $4, $5, $6, $7)';
+  pool.query(sql, [name, address, amountNumeric, amountWords, date, notes, mobileno], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.status(200).json({ message: 'Udhaar form submitted successfully' });
+  });
+});
+
+app.get('/api/udhaar/filter', (req, res) => {
+  const { date, month, year, offset = 0, limit = 50 } = req.query;
+
+  let sql = 'SELECT * FROM udhaar WHERE 1=1';
+  const params = [];
+
+  if (date) {
+    params.push(date);
+    sql += ` AND DATE(date) = $${params.length}`;
+  }
+  if (month) {
+    params.push(month);
+    sql += ` AND EXTRACT(MONTH FROM date) = $${params.length}`;
+  }
+  if (year) {
+    params.push(year);
+    sql += ` AND EXTRACT(YEAR FROM date) = $${params.length}`;
+  }
+
+  params.push(limit);
+  params.push(offset);
+  sql += ` ORDER BY date DESC LIMIT $${params.length - 1} OFFSET $${params.length}`;
+
+  pool.query(sql, params, (err, results) => {
+    if (err) {
+      return res.status(500).send(err);
+    }
+    res.send(results.rows);
   });
 });
 
