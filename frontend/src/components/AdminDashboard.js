@@ -243,7 +243,7 @@ const AdminDashboard = () => {
   return (
     <div>
       <div className="banner">
-        <h1>श्री हरिबांध धाम ट्रस्ट समिति (रजिo)</h1>
+        <h1>श्री हरिबाँध धाम ट्रस्ट समिति (रजिo)</h1>
         <p>ग्राम-मौलनपुर, पोस्ट-गवा, जिला सम्भल (उ.प्र.)</p>
         <div className="subheading">
         <p>दिनांक: {getCurrentDate()}</p>

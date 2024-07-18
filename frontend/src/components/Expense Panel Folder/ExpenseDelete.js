@@ -123,7 +123,7 @@ const ExpenseRecords = () => {
   
         pdf.setFontSize(22);
         pdf.setFont('Times', 'Bold');
-        pdf.text('Shree Haribandh Dham Trust Samiti (Reg.)', pdf.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
+        pdf.text('Shree Haridham bandh Trust Samiti (Reg.)', pdf.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
   
         pdf.setFontSize(14);
         pdf.setFont('Times', 'Normal');
