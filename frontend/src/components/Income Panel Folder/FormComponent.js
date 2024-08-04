@@ -170,7 +170,7 @@ const FormComponent = () => {
               name="category"
               value={formData.category}
               onChange={handleChange}
-              required
+              // required
             >
               <MenuItem value="">
                 <em>बाबत्त</em>
