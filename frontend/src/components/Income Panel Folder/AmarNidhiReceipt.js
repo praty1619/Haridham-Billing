@@ -247,7 +247,7 @@ const AmarNidhiReceipt = () => {
             <TableBody>
               {displayedRecords.map((record) => (
                 <TableRow key={record.id}>
-                    <TableCell>{record.id}</TableCell>
+                    <TableCell>{record.receipt_no}</TableCell>
                     <TableCell>{record.name}</TableCell>
                     <TableCell>{record.address}</TableCell>
                     <TableCell>{record.amountnumeric}</TableCell>

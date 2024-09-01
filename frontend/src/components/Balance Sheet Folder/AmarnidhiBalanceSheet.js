@@ -67,7 +67,7 @@ const RaseedBalanceSheet = () => {
     ];
 
     const rows = records.map(record => ({
-      id: record.id,
+      id: record.receipt_no,
       name: record.name,
       address: record.address,
       amountnumeric: record.amountnumeric,
@@ -156,8 +156,8 @@ const RaseedBalanceSheet = () => {
               </TableHead>
               <TableBody>
                 {records.map(record => (
-                  <TableRow key={record.id}>
-                    <TableCell>{record.id}</TableCell>
+                  <TableRow key={record.receipt_no}>
+                    <TableCell>{record.receipt_no}</TableCell>
                     <TableCell>{record.name}</TableCell>
                     <TableCell>{record.address}</TableCell>
                     <TableCell>{record.amountnumeric}</TableCell>

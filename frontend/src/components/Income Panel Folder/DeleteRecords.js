@@ -93,28 +93,45 @@ const DeleteRecords = () => {
   };
 
   const handleDeleteSelected = async () => {
-    try {
-      await Promise.all(
-        selectedRecords.map((recordId) =>
-          fetch(`/api/forms/${recordId}`, {
-            method: 'DELETE',
-          })
-        )
-      );
-      setSelectedRecords([]);
-      fetchRecords(filters); // Refetch records after deletion
-    } catch (err) {
-      setError('Failed to delete records');
+  try {
+    const response = await fetch('/api/forms/deleteBulk', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ids: selectedRecords }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete records');
     }
-  };
 
-  const handleDownload = () => {
-    selectedRecords.forEach((recordId) => {
-      const record = records.find((rec) => rec.id === recordId);
-      if (!record) return;
+    setRecords((prevRecords) => prevRecords.filter(record => !selectedRecords.includes(record.id)));
+    setSelectedRecords([]);
+  } catch (err) {
+    setError('Failed to delete records');
+  }
+};
 
-      const { name, address, category, amountnumeric, amountwords, mobileno, notes, date } = record;
-      const receiptId = `${recordId}I`; // Use the record ID for the receipt
+
+  const handleDownload = async () => {
+  try {
+    const response = await fetch('/api/forms/get-receipt-nos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ids: selectedRecords }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch records for download');
+    }
+
+    const recordsToDownload = await response.json();
+
+    recordsToDownload.forEach((record) => {
+      const { receipt_no, name, address, category, amountnumeric, amountwords, mobileno, notes, date } = record;
 
       const pdf = new jsPDF();
 
@@ -131,7 +148,7 @@ const DeleteRecords = () => {
 
       pdf.setFontSize(12);
       pdf.text(`Date: ${new Date(date).toLocaleDateString()}`, pdf.internal.pageSize.getWidth() / 2, 60, { align: 'center' });
-      pdf.text(`Reciept ID: ${receiptId}`, pdf.internal.pageSize.getWidth() / 8, 70, { align: 'left' });
+      pdf.text(`Receipt ID: ${receipt_no}I`, pdf.internal.pageSize.getWidth() / 8, 70, { align: 'left' });
 
       pdf.setFontSize(16);
       pdf.setFont('Times', 'Bold');
@@ -183,9 +200,13 @@ const DeleteRecords = () => {
       pdf.setTextColor(100);
       pdf.text('Thank you for your contribution!', pdf.internal.pageSize.getWidth() / 2, 270, { align: 'center' });
 
-      pdf.save(`receipt_${receiptId}.pdf`);
+      pdf.save(`receipt_${receipt_no}.pdf`);
     });
-  };
+
+  }catch (error) {
+    console.error('Error downloading records:', error);
+  }
+};
 
   return (
     <Container maxWidth="md">
@@ -314,7 +335,7 @@ const DeleteRecords = () => {
                           onChange={() => handleSelectRecord(record.id)}
                         />
                       </TableCell>
-                      <TableCell>{record.id}</TableCell>
+                      <TableCell>{record.receipt_no}</TableCell>
                       <TableCell>{record.name}</TableCell>
                       <TableCell>{record.address}</TableCell>
                       <TableCell>{record.category}</TableCell>

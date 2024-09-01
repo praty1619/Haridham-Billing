@@ -93,30 +93,48 @@ const AmarNidhiDelete = () => {
 
   const handleDelete = async () => {
     try {
-      const deletePromises = selectedRecords.map((record) =>
-        fetch(`/api/amarNidhi/${record.id}`, { method: 'DELETE' })
-      );
-      await Promise.all(deletePromises);
-      setRecords((prevRecords) =>
-        prevRecords.filter((record) => !selectedRecords.includes(record))
-      ); // Remove deleted records from the state
-      setSelectedRecords([]); // Clear selected records
-    } catch (error) {
-      console.error('Failed to delete records', error);
-      alert('Failed to delete records');
+      const response = await fetch('/api/amarnidhis/deleteBulk', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ids: selectedRecords.map((record) => record.id) }), // Correctly format the data
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to delete records');
+      }
+  
+      setRecords((prevRecords) => prevRecords.filter(record => !selectedRecords.includes(record)));
+      setSelectedRecords([]);
+    } catch (err) {
+      setError('Failed to delete records');
     }
   };
 
-  const handleDownload = () => {
-    console.log('Selected records:', selectedRecords);
-    selectedRecords.forEach((record) => {
-      console.log('Processing record:', record);
-      if (!record) return;
-
-      const { id, name, address, amountnumeric, amountwords, mobileno, notes, date } = record;
-      const receiptId = `${id}A`; // Use the record ID for the receipt
-
-      const pdf = new jsPDF();
+  const handleDownload = async () => {
+    try {
+      // Extract only the IDs from the selected records
+      const ids = selectedRecords.map((record) => record.id);
+  
+      const response = await fetch('/api/amarnidhis/get-receipt-nos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ids }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch records for download');
+      }
+  
+      const recordsToDownload = await response.json();
+  
+      recordsToDownload.forEach((record) => {
+        const { receipt_no, name, address, amountnumeric, amountwords, mobileno, notes, date } = record;
+  
+        const pdf = new jsPDF();
 
       pdf.setLineWidth(1);
       pdf.rect(10, 10, 190, 277); // Rect(x, y, width, height)
@@ -131,7 +149,7 @@ const AmarNidhiDelete = () => {
 
       pdf.setFontSize(12);
       pdf.text(`Date: ${new Date(date).toLocaleDateString()}`, pdf.internal.pageSize.getWidth() / 2, 60, { align: 'center' });
-      pdf.text(`Receipt ID: ${receiptId}`, pdf.internal.pageSize.getWidth() / 8, 70, { align: 'left' });
+      pdf.text(`Receipt ID: ${receipt_no}A`, pdf.internal.pageSize.getWidth() / 8, 70, { align: 'left' });
 
       pdf.setFontSize(16);
       pdf.setFont('Times', 'Bold');
@@ -170,7 +188,6 @@ const AmarNidhiDelete = () => {
       pdf.rect(fieldX, 192, fieldWidth, fieldHeight);
       pdf.text(String(notes), fieldX + 2, 200);
 
-
       pdf.setFontSize(12);
       pdf.setFont('Times', 'Normal');
       pdf.text('Signature:', 20, 250);
@@ -179,9 +196,12 @@ const AmarNidhiDelete = () => {
       pdf.setTextColor(100);
       pdf.text('Thank you for your contribution!', pdf.internal.pageSize.getWidth() / 2, 270, { align: 'center' });
 
-      pdf.save(`receipt_${receiptId}.pdf`);
+      pdf.save(`receipt_${receipt_no}.pdf`);
     });
-  };
+  }catch (error) {
+    console.error('Error downloading records:', error);
+  }
+};
 
   return (
     <Container maxWidth="md">
@@ -340,7 +360,7 @@ const AmarNidhiDelete = () => {
                       onChange={() => handleSelectRecord(record)}
                     />
                   </TableCell>
-                    <TableCell>{record.id}</TableCell>
+                    <TableCell>{record.receipt_no}</TableCell>
                     <TableCell>{record.name}</TableCell>
                     <TableCell>{record.address}</TableCell>
                     <TableCell>{record.amountnumeric}</TableCell>

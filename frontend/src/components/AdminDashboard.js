@@ -337,7 +337,7 @@ const AdminDashboard = () => {
             </li>
             <li>
             <Button fullWidth variant="outlined" onClick={handleBalanceClick}>
-                बैलेंस शीट पैनल
+                बही खाता पैनल
               </Button>
               <Menu
                 anchorEl={balanceAnchorEl}

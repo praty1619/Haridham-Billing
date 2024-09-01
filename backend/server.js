@@ -45,6 +45,7 @@ const createTables = async () => {
   const createFormsTable = `
     CREATE TABLE IF NOT EXISTS raseed (
       id SERIAL PRIMARY KEY,
+      receipt_no SERIAL,
       name VARCHAR(255),
       address VARCHAR(255),
       category VARCHAR(255),
@@ -78,6 +79,7 @@ const createTables = async () => {
   const createAmarNidhiTable = `
     CREATE TABLE IF NOT EXISTS amar_nidhis (
       id SERIAL PRIMARY KEY,
+      receipt_no SERIAL,
       name VARCHAR(255) NOT NULL,
       address VARCHAR(255) NOT NULL,
       amountNumeric DECIMAL(10, 2) NOT NULL DEFAULT 1100,
@@ -91,6 +93,7 @@ const createTables = async () => {
   const createExpenseFormsTable = `
     CREATE TABLE IF NOT EXISTS expense_form (
       id SERIAL PRIMARY KEY,
+      receipt_no SERIAL,
       name VARCHAR(255) NOT NULL,
       address VARCHAR(255) NOT NULL,
       category VARCHAR(255) NOT NULL,
@@ -218,7 +221,7 @@ app.get('/api/admin-dashboard', verifyToken, (req, res) => {
 // Endpoint to fetch the latest ID
 app.get('/api/expense/latestId', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT MAX(id) as latestId FROM expense_form'); // replace `forms` with your actual table name
+    const { rows } = await pool.query('SELECT MAX(receipt_no) as latestId FROM expense_form'); // replace `forms` with your actual table name
     const latestId = rows[0].latestid || 0; // Get the latest ID or default to 0 if none found
     res.json({ latestId });
   } catch (err) {
@@ -227,16 +230,36 @@ app.get('/api/expense/latestId', async (req, res) => {
   }
 });
 
-app.post('/submit-expense', (req, res) => {
-  const { name, address, category, amountNumeric, amountWords, date, notes, tips , mobileno } = req.body;
-  const sql = 'INSERT INTO expense_form (name, address, category, amountNumeric, amountWords, date, notes, tips , mobileno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8 , $9)';
-  pool.query(sql, [name, address, category, amountNumeric, amountWords, date, notes, tips, mobileno], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.status(200).json({ message: 'Expense form submitted successfully' });
-  });
+app.post('/submit-expense', async (req, res) => {
+  const { name, address, category, amountNumeric, amountWords, mobileno, notes, tips, date } = req.body;
+
+  try {
+    // Start a transaction
+    await pool.query('BEGIN');
+
+    // Get the highest current receipt_no
+    const result = await pool.query('SELECT COALESCE(MAX(receipt_no), 0) AS max_receipt_no FROM expense_form');
+    const maxReceiptNo = result.rows[0].max_receipt_no;
+
+    // Insert new record with the next sequential receipt_no
+    const insertSql = `
+      INSERT INTO expense_form (receipt_no, name, address, category, amountNumeric, amountWords, mobileno, notes, tips, date)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+    `;
+    await pool.query(insertSql, [maxReceiptNo + 1, name, address, category, amountNumeric, amountWords, mobileno, notes, tips, date]);
+
+    // Commit the transaction
+    await pool.query('COMMIT');
+
+    res.status(200).json({ message: 'Form submitted successfully' });
+  } catch (err) {
+    // Rollback the transaction in case of an error
+    await pool.query('ROLLBACK');
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
+
 
 app.get('/api/expense/filter', (req, res) => {
   const { category, date, month, year, offset = 0, limit = 50 } = req.query;
@@ -343,7 +366,7 @@ app.get('/api/expense/totalAmount', async (req, res) => {
 // Endpoint to fetch the latest ID
 app.get('/api/forms/latestId', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT MAX(id) as latestId FROM raseed'); // replace `forms` with your actual table name
+    const { rows } = await pool.query('SELECT MAX(receipt_no) as latestId FROM raseed'); // replace `forms` with your actual table name
     const latestId = rows[0].latestid || 0; // Get the latest ID or default to 0 if none found
     res.json({ latestId });
   } catch (err) {
@@ -352,16 +375,36 @@ app.get('/api/forms/latestId', async (req, res) => {
   }
 });
 
-app.post('/submit-form', (req, res) => {
+app.post('/submit-form', async (req, res) => {
   const { name, address, category, amountNumeric, amountWords, mobileno, notes, date } = req.body;
-  const sql = 'INSERT INTO raseed (name, address, category, amountNumeric, amountWords, mobileno, notes, date) VALUES ($1, $2, $3, $4, $5, $6, $7 , $8)';
-  pool.query(sql, [name, address, category, amountNumeric, amountWords, mobileno, notes, date], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
+
+  try {
+    // Start a transaction
+    await pool.query('BEGIN');
+
+    // Get the highest current receipt_no
+    const result = await pool.query('SELECT COALESCE(MAX(receipt_no), 0) AS max_receipt_no FROM raseed');
+    const maxReceiptNo = result.rows[0].max_receipt_no;
+
+    // Insert new record with the next sequential receipt_no
+    const insertSql = `
+      INSERT INTO raseed (receipt_no, name, address, category, amountNumeric, amountWords, mobileno, notes, date)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    `;
+    await pool.query(insertSql, [maxReceiptNo + 1, name, address, category, amountNumeric, amountWords, mobileno, notes, date]);
+
+    // Commit the transaction
+    await pool.query('COMMIT');
+    
+    res.status(200).json({ message: 'Form submitted successfully' });
+  } catch (err) {
+    // Rollback the transaction in case of an error
+    await pool.query('ROLLBACK');
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
   }
-  res.status(200).json({ message: 'Form submitted successfully' });
 });
-});
+
 
 app.get('/api/forms', (req, res) => {
   const sql = 'SELECT * FROM raseed';
@@ -479,7 +522,7 @@ app.get('/api/forms/balance', async (req, res) => {
 // Endpoint to fetch the latest ID
 app.get('/api/amarNidhi/latestId', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT MAX(id) as latestId FROM amar_nidhis'); // replace `forms` with your actual table name
+    const { rows } = await pool.query('SELECT MAX(receipt_no) as latestId FROM amar_nidhis'); // replace `forms` with your actual table name
     const latestId = rows[0].latestid || 0; // Get the latest ID or default to 0 if none found
     res.json({ latestId });
   } catch (err) {
@@ -488,17 +531,36 @@ app.get('/api/amarNidhi/latestId', async (req, res) => {
   }
 });
 
-// Endpoint to handle form submission for AmarNidhi
-app.post('/api/amarNidhi', (req, res) => {
-  const { name, address, amountNumeric, amountWords , mobileno, notes } = req.body;
-  const sql = 'INSERT INTO amar_nidhis (name, address, amountNumeric, amountWords, mobileno, notes, date) VALUES ($1, $2, $3, $4, $5, $6, NOW())';
-  pool.query(sql, [name, address, amountNumeric, amountWords, mobileno, notes ], (err, result) => {
-    if (err) {
-      return res.status(500).send(err);
-    }
-    res.send({ id: result.insertId });
-  });
+app.post('/api/amarNidhi', async (req, res) => {
+  const { name, address, amountNumeric, amountWords, mobileno, notes, date } = req.body; // Include 'date' from the request body
+
+  try {
+    // Start a transaction
+    await pool.query('BEGIN');
+
+    // Get the highest current receipt_no
+    const result = await pool.query('SELECT COALESCE(MAX(receipt_no), 0) AS max_receipt_no FROM amar_nidhis');
+    const maxReceiptNo = result.rows[0].max_receipt_no;
+
+    // Insert new record with the next sequential receipt_no and user-provided date
+    const insertSql = `
+      INSERT INTO amar_nidhis (receipt_no, name, address, amountNumeric, amountWords, mobileno, notes, date)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `;
+    await pool.query(insertSql, [maxReceiptNo + 1, name, address, amountNumeric, amountWords, mobileno, notes, date]);
+
+    // Commit the transaction
+    await pool.query('COMMIT');
+
+    res.status(200).json({ message: 'Form submitted successfully' });
+  } catch (err) {
+    // Rollback the transaction in case of an error
+    await pool.query('ROLLBACK');
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
+
 
 app.get('/api/amarNidhiReceipt', (req, res) => {
   const sql = 'SELECT SUM(amountNumeric) AS totalAmount FROM amar_nidhis WHERE date > NOW() - INTERVAL \'1 YEAR\'';
@@ -650,42 +712,6 @@ app.get('/api/amarNidhiRecords/custom_date', (req, res) => {
   });
 });
 
-// Add delete endpoint for forms
-app.delete('/api/forms/:id', (req, res) => {
-  const { id } = req.params;
-  const sql = 'DELETE FROM raseed WHERE id = $1';
-  pool.query(sql, [id], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.status(200).json({ message: 'Form deleted successfully' });
-  });
-});
-
-// Endpoint to delete amar_nidhi records
-app.delete('/api/amarNidhi/:id', (req, res) => {
-  const { id } = req.params;
-  const sql = 'DELETE FROM amar_nidhis WHERE id = $1';
-  pool.query(sql, [id], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.status(200).json({ message: 'Record deleted successfully' });
-  });
-});
-
-// Endpoint to delete expense_forms records
-app.delete('/api/submit-form/:id', (req, res) => {
-  const { id } = req.params;
-  const sql = 'DELETE FROM expense_form WHERE id = $1';
-  pool.query(sql, [id], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.status(200).json({ message: 'Record deleted successfully' });
-  });
-});
-
 app.post('/submit-udhaar', (req, res) => {
   const { name, address, amountNumeric, amountWords, date, notes, mobileno } = req.body;
   const sql = 'INSERT INTO udhaar (name, address, amountNumeric, amountWords, date, notes, mobileno) VALUES ($1, $2, $3, $4, $5, $6, $7)';
@@ -726,6 +752,171 @@ app.get('/api/udhaar/filter', (req, res) => {
     }
     res.send(results.rows);
   });
+});
+
+app.delete('/api/forms/deleteBulk', async (req, res) => {
+  const { ids } = req.body;
+
+  try {
+    // Bulk delete
+    const deleteQuery = 'DELETE FROM raseed WHERE id = ANY($1)';
+    await pool.query(deleteQuery, [ids]);
+
+    // Resequence receipt_no after deletion
+    const resequenceQuery = `
+      WITH OrderedReceipts AS (
+        SELECT id, ROW_NUMBER() OVER (ORDER BY id) AS new_receipt_no
+        FROM raseed
+      )
+      UPDATE raseed
+      SET receipt_no = OrderedReceipts.new_receipt_no
+      FROM OrderedReceipts
+      WHERE raseed.id = OrderedReceipts.id;
+    `;
+    await pool.query(resequenceQuery);
+
+    res.status(200).json({ message: 'Forms deleted and receipt numbers resequenced successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.post('/api/forms/get-receipt-nos', async (req, res) => {
+  const { ids } = req.body;
+
+  if (!ids || ids.length === 0) {
+    return res.status(400).json({ error: 'No record IDs provided' });
+  }
+
+  try {
+    // Query to fetch the records based on the provided IDs
+    const query = `
+      SELECT receipt_no, name, address, category, amountnumeric, amountwords, mobileno, notes, date 
+      FROM raseed
+      WHERE id = ANY($1)
+    `;
+    const { rows } = await pool.query(query, [ids]);
+
+    // Return the records with receipt_no
+    res.status(200).json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.delete('/api/amarnidhis/deleteBulk', async (req, res) => {
+  const { ids } = req.body; // Make sure this is an array of integers
+  
+  try {
+    // Ensure all ids are integers
+    const parsedIds = ids.map((id) => parseInt(id)).filter(Number.isInteger);
+    
+    if (parsedIds.length === 0) {
+      return res.status(400).json({ error: 'No valid IDs provided for deletion.' });
+    }
+    
+    // Bulk delete using valid IDs
+    const deleteQuery = 'DELETE FROM amar_nidhis WHERE id = ANY($1)';
+    await pool.query(deleteQuery, [parsedIds]);
+
+    // Resequence receipt_no after deletion
+    const resequenceQuery = `
+      WITH OrderedReceipts AS (
+        SELECT id, ROW_NUMBER() OVER (ORDER BY id) AS new_receipt_no
+        FROM amar_nidhis
+      )
+      UPDATE amar_nidhis
+      SET receipt_no = OrderedReceipts.new_receipt_no
+      FROM OrderedReceipts
+      WHERE amar_nidhis.id = OrderedReceipts.id;
+    `;
+    await pool.query(resequenceQuery);
+
+    res.status(200).json({ message: 'Forms deleted and receipt numbers resequenced successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/api/amarnidhis/get-receipt-nos', async (req, res) => {
+  const { ids } = req.body;
+
+  if (!ids || ids.length === 0) {
+    return res.status(400).json({ error: 'No record IDs provided' });
+  }
+
+  try {
+    // Query to fetch the records based on the provided IDs
+    const query = `
+      SELECT receipt_no, name, address, amountnumeric, amountwords, mobileno, notes, date 
+      FROM amar_nidhis
+      WHERE id = ANY($1)
+    `;
+    const { rows } = await pool.query(query, [ids]);
+
+    // Return the records with receipt_no
+    res.status(200).json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.delete('/api/expense/deleteBulk', async (req, res) => {
+  const { ids } = req.body;
+
+  try {
+    // Bulk delete
+    const deleteQuery = 'DELETE FROM expense_form WHERE id = ANY($1)';
+    await pool.query(deleteQuery, [ids]);
+
+    // Resequence receipt_no after deletion
+    const resequenceQuery = `
+      WITH OrderedReceipts AS (
+        SELECT id, ROW_NUMBER() OVER (ORDER BY id) AS new_receipt_no
+        FROM expense_form
+      )
+      UPDATE expense_form
+      SET receipt_no = OrderedReceipts.new_receipt_no
+      FROM OrderedReceipts
+      WHERE expense_form.id = OrderedReceipts.id;
+    `;
+    await pool.query(resequenceQuery);
+
+    res.status(200).json({ message: 'Forms deleted and receipt numbers resequenced successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/api/expense/get-receipt-nos', async (req, res) => {
+  const { ids } = req.body;
+
+  if (!ids || ids.length === 0) {
+    return res.status(400).json({ error: 'No record IDs provided' });
+  }
+
+  try {
+    // Query to fetch the records based on the provided IDs
+    const query = `
+      SELECT receipt_no, name, address,category, amountnumeric, amountwords, mobileno, notes, tips, date 
+      FROM expense_form
+      WHERE id = ANY($1)
+    `;
+    const { rows } = await pool.query(query, [ids]);
+
+    // Return the records with receipt_no
+    res.status(200).json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 app.use(express.static(path.join(__dirname, "build")));

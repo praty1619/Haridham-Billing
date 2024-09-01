@@ -27,8 +27,8 @@ const FormRecords = () => {
   }, []);
 
   useEffect(() => {
-    setDisplayedRecords(records.slice(0, 50));
-  }, [records]);
+    setDisplayedRecords(records.slice(0, offset + limit));
+  }, [records, offset]);
 
   const fetchTotalAmount = async (filters = {}) => {
     setLoading(true);
@@ -70,7 +70,6 @@ const FormRecords = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
-      console.log(data);
       setRecords((prevRecords) => (append ? [...prevRecords, ...data] : data));
     } catch (err) {
       setError(err.message);
@@ -107,17 +106,17 @@ const FormRecords = () => {
   const handleShowMore = () => {
     const newOffset = offset + limit;
     setOffset(newOffset);
-    setDisplayedRecords(records.slice(0, newOffset + 50));
+    fetchRecords(filters, true); // Append new records
   };
 
   return (
     <Container maxWidth="md">
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
         <Typography variant="h6" component="h2" gutterBottom>
-        कुल राशि: ₹{totalAmount}
+          कुल राशि: ₹{totalAmount}
         </Typography>
         <Typography variant="h6" component="h2" gutterBottom>
-        रसीद खता
+          रसीद खता
         </Typography>
         <Box display="flex" justifyContent="space-between" mb={2}>
           <FormControl style={{ width: '23%' }}>
@@ -231,9 +230,9 @@ const FormRecords = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                {displayedRecords.map((record) => (
-                    <TableRow key={record.id}>
-                      <TableCell>{record.id}</TableCell>
+                  {displayedRecords.map((record) => (
+                    <TableRow key={record.receipt_no}>
+                      <TableCell>{record.receipt_no}</TableCell>
                       <TableCell>{record.name}</TableCell>
                       <TableCell>{record.address}</TableCell>
                       <TableCell>{record.category}</TableCell>
