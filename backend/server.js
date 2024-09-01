@@ -16,20 +16,20 @@ app.use(cors({
 
 app.use(bodyParser.json());
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
-
 // const pool = new Pool({
-//   host: process.env.DB_HOST,
-//   user: process.env.DB_USER,cld
-//   password: process.env.DB_PASSWORD,
-//   database: process.env.DB_NAME,
-//   port: process.env.DB_PORT,
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: {
+//     rejectUnauthorized: false,
+//   },
 // });
+
+const pool = new Pool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,cld,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
+});
 
 pool.connect(async (err) => {
   if (err) {
